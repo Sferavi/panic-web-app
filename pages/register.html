@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    background-color: rgb(251, 251, 251);
+    background-image: url(../images/background.svg);
+    background-repeat: repeat;
+    background-position: center top;
+} 
+.error {
+    color: red;
+}
+form {
+    border: 3px solid #f1f1f1;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.custom-input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 0 0 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+.submit-button {
+    background-color: #1294FC;
+    color: white;
+    margin: 10px 0;
+    padding: 14px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+.cancel-button {
+    background-color: #9ea7ae;
+    color: white;
+    margin: 10px 0;
+    padding: 14px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+button:hover {
+    opacity: 0.8;
+}
+.imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+}
+img.avatar {
+    border-radius: 30%;
+}
+.custom-container {
+    padding: 16px;
+}
+.text-center {
+    text-align: center;
+    color: #5d2025;
+    font-weight: bold;
+}
+.custom-card {
+    margin: 0 auto;
+    font-size: 14px;
+}
+@media screen and (min-width: 601px) {
+  .avatar {
+    width: 20%;
+  }
+}
+@media screen and (max-width: 600px) {
+  .avatar {
+    width: 40%;
+  }
+}
+</style>
+
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/css/toastr.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css"/>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css"/>
+<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="../favicon.ico"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Register</title>
+</head>  
+
+<body>
+<h1 class="text-center">Create your account</h1>
+    <form id="register-form">
+      <div class="imgcontainer">
+          <img src="../images/app-icon.png" alt="Avatar" class="avatar">
+      </div>
+      <div class="col-lg-4 col-md-8 custom-card" style="float:none;">
+        <div class="custom-container">
+            <div>
+                <label><b>Username</b></label>
+                <input class="custom-input" type="text" placeholder="Enter username" name="username" required>
+            </div>
+
+            <div>
+                <label><b>Email</b></label>
+                <input class="custom-input" type="email" placeholder="Enter email address" name="email" required>
+            </div>
+
+            <div>
+                <label><b>Password</b></label>
+                <input class="custom-input" type="password" placeholder="Enter password" name="password" minLength="8" required>
+            </div>
+
+            <div>
+                <label><b>Confirm password</b></label>
+                <input class="custom-input" type="password" placeholder="Confirm password" name="confirm-password" minLength="8" required>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-success submit-button">Register</button>
+                <button type="button" class="btn cancel-button" onclick="window.location = 'login.html'">Go Back</button>
+            </div>
+        </div>
+    </div>
+  </form>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/js/toastr.js"></script>
+
+<script>
+$('#register-form').validate({
+  submitHandler: function(form) {
+      var confirmPassword =$('#register-form input[name="confirm-password"]').val();
+      var lowerCaseLetters = /[a-z]/g;
+      var upperCaseLetters = /[A-Z]/g;
+      var numbers = /[0-9]/g;
+      var user = {
+        username: $('#register-form input[name="username"]').val(),
+        email: $('#register-form input[name="email"]').val(),
+        password: $('#register-form input[name="password"]').val()
+      }
+    if (isValid(user.username)) {
+        if (user.password == confirmPassword) {
+            if(!isValid(user.password)) {
+                if(user.password.match(lowerCaseLetters)) {
+                    if(user.password.match(upperCaseLetters)) {
+                        if(user.password.match(numbers)) {
+                            toastr.success('Registered successfully');
+                            window.location = "login.html"
+                        } else {
+                            toastr.error("Passwords has to contain at least one number");
+                        }
+                    } else {
+                        toastr.error("Passwords has to contain at least one upper case letter");
+                    }
+                } else {
+                    toastr.error("Passwords has to contain at least one lower case letter");
+                }
+            } else {
+            toastr.error("Passwords has to contain at least one special character");
+            }
+        } else {
+            toastr.error("Passwords do not match");
+        }
+    } else {
+        toastr.error("Username cannot contain special characters");
+    }
+}
+});
+
+function isValid(str){
+ return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(str);
+}
+</script>
+
+</html>

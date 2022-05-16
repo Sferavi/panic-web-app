@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+.navigation_list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #5d2025;
+}
+.navigation {
+    float: left;
+}
+.navigation a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 14px;
+}
+.navigation_list {
+    position:sticky;
+    top:0;
+    z-index: 300;
+}
+.navigation a:hover {
+    background-color: gray;
+    text-decoration: none;
+}
+body {
+    background-color: rgb(251, 251, 251);
+    background-image: url(../images/background.svg);
+    background-repeat: repeat;
+    background-position: center top;
+}
+.error {
+    color: red;
+}
+.recipe-links {
+    color: black;
+    overflow:auto;
+}
+.recipe-links:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+.custom-input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 0 0 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    text-align: center;
+}
+.list-item {
+    display: flex;
+    height: auto;
+    width: 95%;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 20px 0;
+    border: 3px solid #5d2025;
+    background-color: #f9f9f9;
+}
+.hidden {
+    display: none;
+}
+.img-container {
+    display: inherit;
+    height: auto;
+    width: 150px;
+    height: 150px;
+}
+.text-container {
+    margin-left: 10px;
+    display: flex;
+    padding-right: 6px;
+    width: 100%;
+}
+.inner-text-container {
+    padding-left: 20px;
+    width: 100%;
+}
+.title-text {
+    font-weight: bold;
+    margin-bottom: 6px;
+    width:inherit;
+}
+.body-text {
+    display: inherit;
+    overflow: hidden;
+}
+.delete-button {
+    float:right;
+    padding-right: 10px;
+}
+.edit-button {
+    margin-left: 10px;
+}
+.add-button {
+    float:right;
+}
+.delete-button:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+.add-button:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+.edit-button:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+.img-displayed {
+    display: inherit;
+    margin: 4px;
+    border: 3px solid #5d2025;
+    border-radius: 5px;
+}
+img:hover {
+    cursor: pointer;
+}
+.search-recipes button:hover {background-color: #3e8e41}
+.search-recipes button:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+}
+.search-recipes {
+    width: 80%;
+    padding: 5px;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.text-center {
+    text-align: center;
+    color: #5d2025;
+    font-weight: bold;
+}
+.recipe-list {
+    align-items: center;
+}
+@media screen and (min-width: 601px) {
+    .list-item {
+        width: 95%;
+    }
+    .title-text {
+       font-size: 30px; 
+    }
+}
+@media screen and (max-width: 600px) {
+    .list-item {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 85%;
+    }
+    .title-text {
+       font-size: 20px; 
+    }
+    .navigation_list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+</style>
+
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/css/toastr.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="../favicon.ico"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My recipes</title>
+</head>
+
+<body>
+<ul class="navigation_list">
+  <li class="navigation"><a href="recipes.html">Recipes</a></li>
+  <li class="navigation"><a href="my_recipes.html">My Recipes</a></li>
+  <li class="navigation"><a href="cookbooks.html">Cookbooks</a></li>
+  <li class="navigation"><a href="favorite_recipes.html">Favorite Recipes</a></li>
+  <li class="navigation"><a href="leaderboard.html">Leaderboard</a></li>
+  <li class="navigation"><a href="profile.html">Profile</a></li>
+  <li class="navigation"><a href="about.html">About</a></li>
+  <li class="navigation" style="float:right;"><a href="login.html">Log out</a></li>
+</ul>
+
+<h1 class="text-center">My recipes</h1>
+<div class="search-recipes">
+  <i type="button" class="fa fa-plus fa-2x add-button" data-toggle="modal" data-target="#add-recipe-modal"></i>
+  <input type="text" name="recipes-search" id="recipes-search" placeholder="&#128269; Search recipes" class="form-control"/>
+</div>
+
+<div class="container">
+  <ul id="list-of-recipes" class="recipe-list" style="padding-left: 55px;">
+    <div class="row">
+      <li class="list-item" id="recipe-1">
+        <div class="img-container">
+            <img onclick="openRecipeInfo(1)" src="../images/recipe_1.jpg" alt="Avatar" class="img-displayed">
+        </div>
+        <div class="text-container">
+          <div class="row inner-text-container">
+              <div class="title-text"><a onclick="openRecipeInfo(1)" class="recipe-links">Skillet Chicken Bulgogi</a><i class="fa fa-trash-o delete-button" onclick="confirm_modal_show(1)"></i><i class="fa fa-pencil edit-button" onclick="edit_recipe(1)"></i></div>
+              <div class="body-text">This is a quick and easy, but very tasty meal. You can substitute the chicken with beef or pork for variety. My wife and I absolutely love this recipe, and it only takes 30 minutes with very few dirty dishes! Serve over rice.</div>
+          </div>
+        </div>
+      </li>
+
+      <li class="list-item" id="recipe-2">
+        <div class="img-container">
+            <img onclick="openRecipeInfo(2)" src="../images/recipe_2.jpg" alt="Avatar" class="img-displayed">
+        </div>
+          <div class="text-container">
+            <div class="row inner-text-container">
+                <div class="title-text"><a onclick="openRecipeInfo(2)" class="recipe-links">Andie's Sloppy Joes</a><i class="fa fa-trash-o delete-button" onclick="confirm_modal_show(2)"></i><i class="fa fa-pencil edit-button" onclick="edit_recipe(2)"></i></div>
+                <div class="body-text">I cobbled this recipe together from a myriad of online recipes. I couldn't find a more veggie-friendly option, and had BBQ sauce in the fridge. This is a kiddo and grandkid-friendly recipe you can whip up for an in-a-pinch meal... or add it to your regular menu rotation and get those veggies in without a struggle!</div>
+            </div>
+          </div>
+      </li>
+
+      <li class="list-item" id="recipe-3">
+        <div class="img-container">
+            <img onclick="openRecipeInfo(3)" src="../images/recipe_3.jpg" alt="Avatar" class="img-displayed">
+        </div>
+        <div class="text-container">
+            <div class="row inner-text-container">
+                <div class="title-text"><a onclick="openRecipeInfo(3)" class="recipe-links">Omelet in a Mug</a><i class="fa fa-trash-o delete-button" onclick="confirm_modal_show(3)"></i><i class="fa fa-pencil edit-button" onclick="edit_recipe(3)"></i></div>
+                <div class="body-text">A quick and easy breakfast when you don't have time to cook or do dishes afterwards.</div>
+            </div>
+        </div>
+      </li>
+
+      <li class="list-item" id="recipe-4">
+        <div class="img-container">
+            <img onclick="openRecipeInfo(4)" src="../images/recipe_4.jpg" alt="Avatar" class="img-displayed">
+        </div>
+        <div class="text-container">
+            <div class="row inner-text-container">
+                <div class="title-text"><a onclick="openRecipeInfo(4)" class="recipe-links">Grandma's Salmon Cakes</a><i class="fa fa-trash-o delete-button" onclick="confirm_modal_show(4)"></i><i class="fa fa-pencil edit-button" onclick="edit_recipe(4)"></i></div>
+                <div class="body-text">This is a recipe for my Grandmother's famous salmon cakes. It is a family recipe that has been passed down through generations. Serve with macaroni and cheese or any other type of side dish.</div>
+            </div>
+        </div>
+      </li>
+
+      <li class="list-item" id="recipe-5">
+        <div class="img-container">
+            <img onclick="openRecipeInfo(5)" src="../images/recipe_5.jpg" alt="Avatar" class="img-displayed">
+        </div>
+        <div class="text-container">
+          <div class="row inner-text-container">
+              <div class="title-text"><a onclick="openRecipeInfo(5)" class="recipe-links">Klupskies (Polish Burgers)</a><i class="fa fa-trash-o delete-button" onclick="confirm_modal_show(5)"></i><i class="fa fa-pencil edit-button" onclick="edit_recipe(5)"></i></div>
+              <div class="body-text">This recipe is a family favorite that was passed down over the generations. Grandma and Pap just ate them plain, with a fork (sometimes dipped in ketchup), but our family likes to top these burgers with cheese and serve on a hamburger bun in a the traditional way. I have also seen these referred to as Kotlety Mielone. These can also be cooked on the grill.</div>
+          </div>
+        </div>
+      </li>
+    </div>  
+  </ul>
+</div>
+
+<div class="modal fade" id="add-recipe-modal" tabindex="-1" role="dialog" aria-labelledby="addRecipeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="add-recipe-form">
+        <div class="modal-header">
+          <h4 class="modal-title" id="add-recipe-modal-label" style="display:inline-block;">Add new recipe</h4>
+            <button type="button" style="display:inline-block;" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+          <div>
+            <label><b>Recipe name</b></label>
+            <input class="custom-input" type="text" name="recipe-name" required>
+          </div>
+          <div>
+            <label><b>Short recipe description</b></label>
+            <textarea class="custom-input" rows="4" cols="50" name="recipe-description" required></textarea>
+          </div>
+
+          <div>
+            <label><b>Ingredients</b></label>
+            <textarea class="custom-input" rows="4" cols="50" name="ingredients" required></textarea>
+          </div>
+
+          <div>
+            <label><b>Cooking steps</b></label>
+            <textarea class="custom-input" rows="4" cols="50" name="cooking-steps" required></textarea>
+          </div>
+
+          <div>
+            <label><b>Estimated time for cooking (in minutes)</b></label>
+            <input class="custom-input" type="number" name="cooking-time" required>
+          </div>
+
+          <div>
+            <label><b>Dish picture (.png, .gif, .jpeg, .jpg allowed)</b></label>
+            <input type="file" name="file" accept="image/jpg,image/png,image/jpeg,image/gif" required/>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="edit-recipe-modal" tabindex="-1" role="dialog" aria-labelledby="editRecipeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="edit-recipe-form">
+        <div class="modal-header">
+          <h4 class="modal-title" id="edit-recipe-modal-label" style="display:inline-block;">Edit recipe</h4>
+            <button type="button" style="display:inline-block;" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body">
+          <div>
+            <label><b>Recipe name</b></label>
+            <input class="custom-input" type="text" name="recipe-name" value="Burem ispod saca" required>
+          </div>
+
+          <div>
+            <label><b>Short recipe description</b></label>
+            <textarea class="custom-input" rows="4" cols="50" name="recipe-description" required></textarea>
+          </div>
+
+          <div>
+              <label><b>Ingredients</b></label>
+              <textarea class="custom-input" rows="4" cols="50" name="ingredients" required></textarea>
+          </div>
+
+          <div>
+            <label><b>Cooking steps</b></label>
+            <textarea class="custom-input" rows="4" cols="50" name="cooking-steps" required></textarea>
+          </div>
+
+          <div>
+            <label><b>Estimated time for cooking (in minutes)</b></label>
+            <input class="custom-input" type="number" name="cooking-time" value="100" required>
+          </div>
+
+          <div>
+            <label><b>Dish picture (.png, .gif, .jpeg, .jpg allowed)</b></label>
+            <label><b>Hint: If no file is chosen, the previously uploaded picture will be displayed</b></label>
+            <input type="file" name="file" accept="image/jpg,image/png,image/jpeg,image/gif"/>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirm-modal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="confirm-form">
+        <div class="modal-header" style="text-align: center;">
+          <h4 class="modal-title" id="confirm-modal-label" style="display:inline-block;">Are you sure?</h4>
+        </div>
+
+        <div class="modal-footer" style="border: none;">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/js/toastr.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script>
+
+function confirm_modal_show(i) {
+  $("#confirm-modal").modal('show');
+  localStorage.setItem('delete_recipe_id', i);
+}
+
+function delete_recipe() {
+  i = localStorage.getItem('delete_recipe_id');
+  if (i == 1) {
+    document.getElementById("recipe-1").className = "hidden";
+    toastr.error('Recipe deleted');
+  } else if (i == 2) {
+    document.getElementById("recipe-2").className = "hidden";
+    toastr.error('Recipe deleted');
+  } else if (i == 3) {
+    document.getElementById("recipe-3").className = "hidden";
+    toastr.error('Recipe deleted');
+  } else if (i == 4) {
+    document.getElementById("recipe-4").className = "hidden";
+    toastr.error('Recipe deleted');
+  } else if (i == 5) {
+    document.getElementById("recipe-5").className = "hidden";
+    toastr.error('Recipe deleted');
+  }
+}
+
+$('#confirm-form').validate({
+  submitHandler: function(form) {
+  delete_recipe();
+  $("#confirm-modal").modal('hide');
+}
+});
+
+function edit_recipe(i) {
+  if (i == 1) {
+    $("#edit-recipe-modal").modal('toggle');
+    $('#edit-recipe-form input[name="recipe-name"]').val("Skillet Chicken Bulgogi");
+    $('#edit-recipe-form textarea[name="recipe-description"]').val("This is a quick and easy, but very tasty meal. You can substitute the chicken with beef or pork for variety. My wife and I absolutely love this recipe, and it only takes 30 minutes with very few dirty dishes! Serve over rice.");
+    $('#edit-recipe-form textarea[name="ingredients"]').val("1/4 cup chopped onion \n5 tablespoons soy sauce \n2.5 tablespoons brown sugar \n2 tablespoons minced garlic \n2 tablespoons sesame oil \n1 tablespoon sesame seeds \n1/2 teaspoon cayenne \nsalt and ground black pepper to taste \n1 pound skinless boneless chicken breasts cut into thin strips");
+    $('#edit-recipe-form textarea[name="cooking-steps"]').val("Step 1: \nWhisk onion, soy sauce, brown sugar, garlic, sesame oil, sesame seeds, cayenne pepper, salt, and black pepper together in a bowl until marinade is smooth.\nStep 2: \nCook and stir chicken and marinade together in a large skillet over medium-high heat until chicken is cooked through, about 15 minutes.");
+    $('#edit-recipe-form input[name="cooking-time"]').val("15");
+    $('#edit-recipe-form input[name="file"]').val("");
+  } else if (i == 2) {
+    $("#edit-recipe-modal").modal('toggle');
+    $('#edit-recipe-form input[name="recipe-name"]').val("Andie's Sloppy Joes");
+    $('#edit-recipe-form textarea[name="recipe-description"]').val("I cobbled this recipe together from a myriad of online recipes. I couldn't find a more veggie-friendly option, and had BBQ sauce in the fridge. This is a kiddo and grandkid-friendly recipe you can whip up for an in-a-pinch meal... or add it to your regular menu rotation and get those veggies in without a struggle!");
+    $('#edit-recipe-form textarea[name="ingredients"]').val("1 cup lentils \n2 onions diced \n1 pound lean ground beef \n1 large green bell pepper diced \n3/4 cup ketchup \n3/4 cup barbeque sauce \n1 tablespoon Worcestershire sauce \n1 tablespoon minced garlic");
+    $('#edit-recipe-form textarea[name="cooking-steps"]').val("Step 1: \nPlace lentils in a small pot and cover with 2 cups hot water. Bring to a boil; reduce heat and simmer until lentils are tender, about 15 minutes. Drain.\nStep 2: \nHeat a large nonstick skillet over medium heat. Add onions; cook and stir until softened, 3 to 5 minutes. Add ground beef and green bell pepper; cook and stir until browned, about 8 minutes. \nStep 3: \nStir drained lentils, ketchup, barbeque sauce, Worcestershire sauce, and minced garlic into the skillet. Reduce heat to low and simmer until flavors combine and mixture thickens to desired consistency, 15 to 20 minutes.");
+    $('#edit-recipe-form input[name="cooking-time"]').val("46");
+    $('#edit-recipe-form input[name="file"]').val("");
+  } else if (i == 3) {
+    $("#edit-recipe-modal").modal('toggle');
+    $('#edit-recipe-form input[name="recipe-name"]').val("Omelet in a Mug");
+    $('#edit-recipe-form textarea[name="recipe-description"]').val("A quick and easy breakfast when you don't have time to cook or do dishes afterwards.");
+    $('#edit-recipe-form textarea[name="ingredients"]').val("1 large egg \n2 egg whites \n2 tablespoons shredded Cheddar cheese \n2 tablespoons diced fully cooked ham \n1 tablespoon diced green bell pepper \nsalt and ground black pepper to taste \ncooking spray");
+    $('#edit-recipe-form textarea[name="cooking-steps"]').val("Step 1: \nCombine egg, egg whites, Cheddar cheese, ham, bell pepper, salt, and ground pepper in a microwave-safe mug coated with non-stick spray.\nStep 2: \nMicrowave on high for 1 minute; stir. Return to microwave and cook until eggs are completely set, 1 to 1 1/2 minutes longer.");
+    $('#edit-recipe-form input[name="cooking-time"]').val("2");
+    $('#edit-recipe-form input[name="file"]').val("");
+  } else if (i == 4) {
+    $("#edit-recipe-modal").modal('toggle');
+    $('#edit-recipe-form input[name="recipe-name"]').val("Grandma's Salmon Cakes");
+    $('#edit-recipe-form textarea[name="recipe-description"]').val("This is a recipe for my Grandmother's famous salmon cakes. It is a family recipe that has been passed down through generations. Serve with macaroni and cheese or any other type of side dish.");
+    $('#edit-recipe-form textarea[name="ingredients"]').val("1 (14.75 ounce) can salmon drained and flaked \n2 eggs, beaten \n1 small onion, diced \n1 teaspoon ground black pepper \n3 tablespoons vegetable oil");
+    $('#edit-recipe-form textarea[name="cooking-steps"]').val("Step 1: \nPick through the salmon and remove any bones. In a mixing bowl, beat the eggs and add the diced onion, salmon and pepper. Mix thoroughly.\nStep 2: \nShape into 2 ounce patties; about 7 or 8 patties. In a large skillet over medium heat, heat the oil. Fry each patty for 5 minutes on each side or until crispy and golden brown.");
+    $('#edit-recipe-form input[name="cooking-time"]').val("20");
+    $('#edit-recipe-form input[name="file"]').val("");
+  } else if (i == 5) {
+    $("#edit-recipe-modal").modal('toggle');
+    $('#edit-recipe-form input[name="recipe-name"]').val("Klupskies (Polish Burgers)");
+    $('#edit-recipe-form textarea[name="recipe-description"]').val("This recipe is a family favorite that was passed down over the generations. Grandma and Pap just ate them plain, with a fork (sometimes dipped in ketchup), but our family likes to top these burgers with cheese and serve on a hamburger bun in a the traditional way. I have also seen these referred to as Kotlety Mielone. These can also be cooked on the grill.");
+    $('#edit-recipe-form textarea[name="ingredients"]').val("1 pound ground beef \n1 small onion, diced \n1/2 green pepper, diced \n1 large green bell pepper diced \n1 egg \n2 tablespoons ketchup \n1/4 teaspoon sea salt \n2 slices white bread, torn into small pieces \n1 serving cooking spray with olive oil");
+    $('#edit-recipe-form textarea[name="cooking-steps"]').val("Step 1: \nMix ground beef, onion, green pepper, egg, ketchup, and sea salt together in a bowl; mix in the white bread pieces until evenly distributed. Form the mixture into 4 patties.\nStep 2: \nSpray a large skillet with olive oil cooking spray and set over medium heat. Cook the burgers until well-browned on the bottoms, about 10 minutes; flip the burgers and cook until the meat is no longer pink and the juices run clear, 8 to 10 more minutes.");
+    $('#edit-recipe-form input[name="cooking-time"]').val("20");
+    $('#edit-recipe-form input[name="file"]').val("");
+  }
+}
+
+function openRecipeInfo(i) {
+    if (i == 1) {
+        localStorage.setItem('recipe_image_url', '../images/recipe_1.jpg');
+        localStorage.setItem('recipe_name', 'Skillet Chicken Bulgogi');
+        localStorage.setItem('recipe_ingredients', '1/4 cup chopped onion \n5 tablespoons soy sauce \n2.5 tablespoons brown sugar \n2 tablespoons minced garlic \n2 tablespoons sesame oil \n1 tablespoon sesame seeds \n1/2 teaspoon cayenne \nsalt and ground black pepper to taste \n1 pound skinless boneless chicken breasts cut into thin strips \n');
+        localStorage.setItem('recipe_cooking_process', 'Step 1: \nWhisk onion, soy sauce, brown sugar, garlic, sesame oil, sesame seeds, cayenne pepper, salt, and black pepper together in a bowl until marinade is smooth.\nStep 2: \nCook and stir chicken and marinade together in a large skillet over medium-high heat until chicken is cooked through, about 15 minutes.');
+        localStorage.setItem('cooking_timer', 15);
+        window.location = 'recipe_info.html';
+    } else if (i == 2) {
+        localStorage.setItem('recipe_image_url', '../images/recipe_2.jpg');
+        localStorage.setItem('recipe_name', "Andie's Sloppy Joes");
+        localStorage.setItem('recipe_ingredients', '1 cup lentils \n2 onions diced \n1 pound lean ground beef \n1 large green bell pepper diced \n3/4 cup ketchup \n3/4 cup barbeque sauce \n1 tablespoon Worcestershire sauce \n1 tablespoon minced garlic');
+        localStorage.setItem('recipe_cooking_process', 'Step 1: \nPlace lentils in a small pot and cover with 2 cups hot water. Bring to a boil; reduce heat and simmer until lentils are tender, about 15 minutes. Drain.\nStep 2: \nHeat a large nonstick skillet over medium heat. Add onions; cook and stir until softened, 3 to 5 minutes. Add ground beef and green bell pepper; cook and stir until browned, about 8 minutes. \nStep 3: \nStir drained lentils, ketchup, barbeque sauce, Worcestershire sauce, and minced garlic into the skillet. Reduce heat to low and simmer until flavors combine and mixture thickens to desired consistency, 15 to 20 minutes.');
+        localStorage.setItem('cooking_timer', 46);
+        window.location = 'recipe_info.html';
+    } else if (i == 3) {
+        localStorage.setItem('recipe_image_url', '../images/recipe_3.jpg');
+        localStorage.setItem('recipe_name', 'Omelet in a Mug');
+        localStorage.setItem('recipe_ingredients', '1 large egg \n2 egg whites \n2 tablespoons shredded Cheddar cheese \n2 tablespoons diced fully cooked ham \n1 tablespoon diced green bell pepper \nsalt and ground black pepper to taste \ncooking spray');
+        localStorage.setItem('recipe_cooking_process', 'Step 1: \nCombine egg, egg whites, Cheddar cheese, ham, bell pepper, salt, and ground pepper in a microwave-safe mug coated with non-stick spray.\nStep 2: \nMicrowave on high for 1 minute; stir. Return to microwave and cook until eggs are completely set, 1 to 1 1/2 minutes longer.');
+        localStorage.setItem('cooking_timer', 2);
+        window.location = 'recipe_info.html';
+    } else if (i == 4) {
+        localStorage.setItem('recipe_image_url', '../images/recipe_4.jpg');
+        localStorage.setItem('recipe_name', "Grandma's Salmon Cakes");
+        localStorage.setItem('recipe_ingredients', '1 (14.75 ounce) can salmon drained and flaked \n2 eggs, beaten \n1 small onion, diced \n1 teaspoon ground black pepper \n3 tablespoons vegetable oil');
+        localStorage.setItem('recipe_cooking_process', 'Step 1: \nPick through the salmon and remove any bones. In a mixing bowl, beat the eggs and add the diced onion, salmon and pepper. Mix thoroughly.\nStep 2: \nShape into 2 ounce patties; about 7 or 8 patties. In a large skillet over medium heat, heat the oil. Fry each patty for 5 minutes on each side or until crispy and golden brown.');
+        localStorage.setItem('cooking_timer', 20);
+        window.location = 'recipe_info.html';
+    } else if (i == 5) {
+        localStorage.setItem('recipe_image_url', '../images/recipe_5.jpg');
+        localStorage.setItem('recipe_name', 'Klupskies (Polish Burgers)');
+        localStorage.setItem('recipe_ingredients', '1 pound ground beef \n1 small onion, diced \n1/2 green pepper, diced \n1 large green bell pepper diced \n1 egg \n2 tablespoons ketchup \n1/4 teaspoon sea salt \n2 slices white bread, torn into small pieces \n1 serving cooking spray with olive oil');
+        localStorage.setItem('recipe_cooking_process', 'Step 1: \nMix ground beef, onion, green pepper, egg, ketchup, and sea salt together in a bowl; mix in the white bread pieces until evenly distributed. Form the mixture into 4 patties.\nStep 2: \nSpray a large skillet with olive oil cooking spray and set over medium heat. Cook the burgers until well-browned on the bottoms, about 10 minutes; flip the burgers and cook until the meat is no longer pink and the juices run clear, 8 to 10 more minutes.');
+        localStorage.setItem('cooking_timer', 20);
+        window.location = 'recipe_info.html';
+    }
+}
+
+$('#add-recipe-form').validate({
+  submitHandler: function(form) {
+    var recipe = {
+    name: $('#add-recipe-form input[name="recipe-name"]').val(),
+    description: $('#add-recipe-form textarea[name="recipe-description"]').val(),
+    ingredients: $('#add-recipe-form textarea[name="ingredients"]').val(),
+    cooking_steps: $('#add-recipe-form textarea[name="cooking-steps"]').val(),
+    cooking_time: $('#add-recipe-form input[name="cooking-time"]').val(),
+    image: $('#add-recipe-form input[name="file"]').val()
+    }
+    var dish_image = recipe.image.split('.').pop().toLowerCase();
+    if ($.inArray(dish_image, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+        toastr.error("Uploaded file type is not allowed. Please select an image type.");
+    } else if (recipe.name != "" && recipe.description != "" && recipe.ingredients != "" && recipe.cooking_time != "" && recipe.cooking_steps != "") {
+        toastr.success('Recipe added successfully');
+        $('#add-recipe-modal').modal('toggle');
+    } else {
+        toastr.error("All required fields are not filled");
+    }
+}
+});
+
+$('#edit-recipe-form').validate({
+  submitHandler: function(form) {
+    var recipe = {
+    name: $('#edit-recipe-form input[name="recipe-name"]').val(),
+    description: $('#edit-recipe-form textarea[name="recipe-description"]').val(),
+    ingredients: $('#edit-recipe-form textarea[name="ingredients"]').val(),
+    cooking_steps: $('#edit-recipe-form textarea[name="cooking-steps"]').val(),
+    cooking_time: $('#edit-recipe-form input[name="cooking-time"]').val(),
+    image: $('#edit-recipe-form input[name="file"]').val()
+    }
+    if (recipe.image != '') {
+      var dish_image = recipe.image.split('.').pop().toLowerCase();
+      if ($.inArray(dish_image, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+          toastr.error("Uploaded file type is not allowed. Please select an image type.");
+      } else if (recipe.name != "" && recipe.description != "" && recipe.ingredients != "" && recipe.cooking_time != "" && recipe.cooking_steps != "") {
+        toastr.success('Recipe edited successfully');
+        $('#edit-recipe-modal').modal('toggle');
+      } else {
+        toastr.error("All required fields are not filled");
+      }
+      } else {
+          if (recipe.name != "" && recipe.description != "" && recipe.ingredients != "" && recipe.cooking_time != "" && recipe.cooking_steps != "") {
+            toastr.success('Recipe edited successfully');
+            $('#edit-recipe-modal').modal('toggle');
+      } else {
+        toastr.error("All required fields are not filled");
+      }
+    }
+}
+});
+
+$(document).ready(function() {
+  $("#recipes-search").keyup(function() {
+    search_table($(this).val());
+  });
+
+function search_table(value) {
+  $('#list-of-recipes li').each(function() {
+    var found = 'false';
+    $(this).each(function() {
+      if ($(this).text().toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+        found = 'true';
+      }
+      });
+      if (found == 'true') {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+  }
+});
+</script>
+
+</html>

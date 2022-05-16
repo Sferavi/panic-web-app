@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+.navigation_list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #5d2025;
+}
+.navigation {
+    float: left;
+}
+.navigation a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    font-size: 14px;
+    text-decoration: none;
+}
+.navigation_list {
+	position:sticky;
+	top:0;
+    z-index: 300;
+}
+.navigation a:hover {
+    background-color: gray;
+    text-decoration: none;
+}
+body {
+    background-color: rgb(251, 251, 251);
+    background-image: url(../images/background.svg);
+    background-repeat: repeat;
+    background-position: center top;
+} 
+.error {
+    color: red;
+}
+.form-custom {
+    margin: 20px auto 0 auto;
+    border: 3px solid #5d2025;
+    border-radius: 5px;
+}
+.custom-input {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 0 0 8px 0;
+    display: inline-block;
+    box-sizing: border-box;
+    text-align: center;
+}
+.inside-modal {
+    border: 1px solid #ccc;
+}
+.display {
+    border: 1px solid #5d2025;
+}
+.submit-button {
+    background-color: #1294FC;
+    color: white;
+    margin: 10px 0;
+    padding: 14px 20px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+button:hover {
+    opacity: 0.8;
+}
+.imgcontainer {
+    padding: 20px 0 20px 0;
+}
+.img-text-container {
+    text-align: center;
+    width: 30%;
+    padding: 20px 10px;
+}
+img.avatar {
+    height: 250px;
+    width: 200px;
+    border-radius: 100%;
+}
+.text-center {
+    text-align: center;
+    color: #5d2025;
+    font-weight: bold;
+}
+.user-information-container {
+    display: flex;
+    flex-direction: column;
+}
+.user-profile-label {
+    white-space: nowrap;
+    padding: 16px 0;
+    font-size: 20px;
+    font-weight: 400;
+}
+.user-profile-text {
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.edit-button {
+    float: right;
+    margin: 16px 0;
+}
+.custom-container {
+    display: flex;
+    width: 100%;
+}
+.name-text {
+    padding: 0 10px;
+    font-size: 30px;
+    font-weight: bold;
+}
+.button-container {
+    margin-bottom: 20px;
+}
+.user-profile-label-special {
+    margin: 50px 10px 0 10px;
+}
+.outer_circle {
+    position: relative;
+    margin: 50px auto;
+    padding: 25px 0;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #ffffff;
+}
+    
+.inner_circle-1 {
+    background-image: linear-gradient(
+                to bottom, rgb(63, 6, 6) 0%,
+                rgb(212, 47, 41) 100%);
+    position: absolute;
+    top: -20px;
+    bottom: -20px;
+    right: -20px;
+    left: -20px;
+    z-index: -1;
+    border-radius: inherit;
+}
+.inner_circle-2 {
+    background-image: linear-gradient(
+                to bottom, rgb(10, 61, 14) 0%,
+                rgb(60, 240, 60) 100%);
+    position: absolute;
+    top: -20px;
+    bottom: -20px;
+    right: -20px;
+    left: -20px;
+    z-index: -1;
+    border-radius: inherit;
+}
+.inner_circle-3 {
+    background-image: linear-gradient(
+                to bottom, rgb(23, 34, 126) 0%,
+                rgb(61, 88, 242) 100%);
+    position: absolute;
+    top: -20px;
+    bottom: -20px;
+    right: -20px;
+    left: -20px;
+    z-index: -1;
+    border-radius: inherit;
+}
+@media screen and (min-width: 601px) {
+    .img-text-container {
+        border-right: 3px solid #5d2025;
+    }
+}
+@media screen and (max-width: 600px) {
+    .custom-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .img-text-container {
+        width: 100%;
+        border-bottom: 3px solid #5d2025;
+    }
+    .navigation_list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+</style>
+
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/css/toastr.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+<link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css"/>
+<link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css"/>
+<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="../favicon.ico"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile</title>
+</head> 
+
+<body>
+<ul class="navigation_list">
+    <li class="navigation"><a href="recipes.html">Recipes</a></li>
+    <li class="navigation"><a href="my_recipes.html">My Recipes</a></li>
+    <li class="navigation"><a href="cookbooks.html">Cookbooks</a></li>
+    <li class="navigation"><a href="favorite_recipes.html">Favorite Recipes</a></li>
+    <li class="navigation"><a href="leaderboard.html">Leaderboard</a></li>
+    <li class="navigation"><a href="profile.html">Profile</a></li>
+    <li class="navigation"><a href="about.html">About</a></li>
+    <li class="navigation" style="float:right;"><a href="login.html">Log out</a></li>
+</ul>
+
+<h1 class="text-center">My Profile</h1>
+<div id="user-profile-form" class="form-custom col-lg-10 col-sm-12" style="float: none; padding: 0;">
+    <div class="custom-container">
+        <div class="img-text-container">
+            <div class="imgcontainer">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e4/Morgan_Freeman_Deauville_2018.jpg" alt="Avatar" class="avatar">
+            </div>
+
+        <div class="name-text">
+            <Text>mf69</Text>
+        </div>
+    </div>
+
+    <div class="user-information-container col-sm-12">
+        <div class="button-container">
+            <button type="button" class="btn btn-primary edit-button" data-toggle="modal" data-target="#edit-profile-modal">Edit Profile</button>
+        </div>
+
+        <div class="text-center col-sm-12">
+            <div class="user-information-left col-md-4 col-sm-12">
+                <div>
+                    <text class="user-profile-label">Username:</text>
+                </div>
+
+                <div>
+                    <text class="user-profile-text">mf69</text>
+                </div>
+
+            <div class="user-profile-label-special">
+                <text class="user-profile-label">Number of Recipes:</text>
+                <div class="outer_circle">
+                        <text style="font-size: 38px;">33</text>
+                    <div class="inner_circle-1"></div>
+                </div>
+            </div>
+            </div>
+
+            <div class="user-information-left col-md-4 col-sm-12">
+                <div>
+                    <text class="user-profile-label">Email:</text>
+                </div>
+
+                <div>
+                    <text class="user-profile-text">mf@gmail.com</text>
+                </div>
+                    <div class="user-profile-label-special">
+                        <text class="user-profile-label">Rank:</text>
+                        <div class="outer_circle">
+                            <text style="font-size: 38px;">10th</text>
+                        <div class="inner_circle-1"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-information-right col-md-4 col-sm-12">
+                    <div>
+                        <text class="user-profile-label">Password:</text>
+                    </div>
+
+                    <div>
+                        <text class="user-profile-text">************</text>
+                    </div>
+                    
+                    <div class="user-profile-label-special">
+                        <text class="user-profile-label" style="overflow: auto;">Number of Cookbooks:</text>
+                        <div class="outer_circle">
+                            <text style="font-size: 38px;">3</text>
+                        <div class="inner_circle-1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edit-profile-modal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form id="edit-profile-form">
+          <div class="modal-header">
+            <h4 class="modal-title" id="edit-profile-modal-label" style="display:inline-block;">Edit profile</h4>
+                <button type="button" style="display:inline-block;" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+          </div>
+
+          <div class="modal-body">
+            <div>
+                <label><b>Username</b></label>
+                <input class="custom-input inside-modal" type="text" name="username" value="Morgan Freeman" required>
+            </div>
+
+            <div>
+                <label><b>Email</b></label>
+                <input class="custom-input inside-modal" type="email" name="email" value="mf@gmail.com" required>
+            </div>
+
+            <div>
+                <label><b>Password</b></label>
+                <input class="custom-input inside-modal" type="password" name="password" minLength="8" value="121eH*R##R" required>
+            </div>
+
+            <div>
+                <label><b>Confirm Password</b></label>
+                <input class="custom-input inside-modal" type="password" name="confirm-password" minLength="8" value="121eH*R##R" required>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/js/toastr.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script>
+$('#edit-profile-form').validate({
+  submitHandler: function(form) {
+      var confirmPassword =$('#edit-profile-form input[name="confirm-password"]').val();
+      var lowerCaseLetters = /[a-z]/g;
+      var upperCaseLetters = /[A-Z]/g;
+      var numbers = /[0-9]/g;
+      var user = {
+        username: $('#edit-profile-form input[name="username"]').val(),
+        email: $('#edit-profile-form input[name="email"]').val(),
+        password: $('#edit-profile-form input[name="password"]').val()
+      }
+    if (isValid(user.username)) {
+        if (user.password == confirmPassword) {
+            if(!isValid(user.password)) {
+                if(user.password.match(lowerCaseLetters)) {
+                    if(user.password.match(upperCaseLetters)) {
+                        if(user.password.match(numbers)) {
+                            toastr.success('User profile edited successfully');
+                            $('#edit-profile-modal').modal('toggle');
+                        } else {
+                            toastr.error("Passwords has to contain at least one number");
+                        }
+                    } else {
+                        toastr.error("Passwords has to contain at least one upper case letter");
+                    }
+                } else {
+                    toastr.error("Passwords has to contain at least one lower case letter");
+                }
+            } else {
+            toastr.error("Passwords has to contain at least one special character");
+            }
+        } else {
+            toastr.error("Passwords do not match");
+        }
+    } else {
+        toastr.error("Username cannot contain special characters");
+    }
+}
+});
+
+function isValid(str){
+ return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(str);
+}
+</script>
+
+</html>
