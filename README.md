@@ -2,6 +2,8 @@
 
 This is v1.0.0 of Panic Web Application
 
+Deployment: https://panic-web-app.netlify.app/pages/login.html
+
 Most of this version is intial design with few functional parts.
 
 In the current version you are only able to login with hardcoded credentials:
