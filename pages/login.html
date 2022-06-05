@@ -92,7 +92,7 @@ span {
       <div class="custom-container">
         <div>
           <label><b>Username or email address</b></label>
-          <input class="custom-input" type="text" placeholder="Enter username or email address" name="username-or-email" required>
+          <input class="custom-input" type="text" placeholder="Enter username or email address" name="username" required>
         </div>
 
         <div>
@@ -112,29 +112,44 @@ span {
   </form>
   
 </body>
+
+<script src="../js/utils.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/1.3.1/js/toastr.js"></script>
 
 <script>
+
+var user = window.localStorage.getItem("user_token");
+
+user = Utils.parseJwt(user);
+if (user){
+  if (user.email){
+    window.location = "index.html";
+  }else{
+    $('body').show();
+  }
+}else{
+  $('body').show();
+}
+
 $('#login-form').validate({
   submitHandler: function(form) {
     var user = {
-      username: $('#login-form input[name="username-or-email"]').val(),
-      password: $('#login-form input[name="password"]').val()
+      username: $('#login-form input[type="text"]').val(),
+      password: $('#login-form input[type="password"]').val()
     }
-    if (user.username == "user123" || user.username == "user123@gmail.com") {
-      if (user.password == "ibuEDU123.") {
-          localStorage.setItem('login', '1');
-          window.location = "recipes.html";
-      } else {
-          toastr.error('Password is not correct');
-      }
-      } else {
-          toastr.error("User not found");
-      }
-  }
+    console.log(user);
+
+    $.post( "../rest/login", user ).done(function(data) {
+      window.localStorage.setItem("user_token", data.user_token);
+      window.location = "recipes.html"; // redirect from login form to main app
+    }).fail(function(error) {
+      toastr.error(error.responseText)
+    });
+}
 });
+
 </script>
 
 </html>
