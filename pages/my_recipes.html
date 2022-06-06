@@ -278,11 +278,11 @@ img:hover {
         <div class="modal-body">
           <div>
             <label><b>Recipe name</b></label>
-            <input class="custom-input" type="text" name="recipe-name" required>
+            <input class="custom-input" type="text" name="recipe_name" required>
           </div>
           <div>
             <label><b>Short recipe description</b></label>
-            <textarea class="custom-input" rows="4" cols="50" name="recipe-description" required></textarea>
+            <textarea class="custom-input" rows="4" cols="50" name="recipe_description" required></textarea>
           </div>
 
           <div>
@@ -292,17 +292,17 @@ img:hover {
 
           <div>
             <label><b>Cooking steps</b></label>
-            <textarea class="custom-input" rows="4" cols="50" name="cooking-steps" required></textarea>
+            <textarea class="custom-input" rows="4" cols="50" name="cooking_steps" required></textarea>
           </div>
 
           <div>
             <label><b>Estimated time for cooking (in minutes)</b></label>
-            <input class="custom-input" type="number" name="cooking-time" required>
+            <input class="custom-input" type="text" name="time" required>
           </div>
 
           <div>
             <label><b>Dish picture (.png, .gif, .jpeg, .jpg allowed)</b></label>
-            <input type="file" name="file" accept="image/jpg,image/png,image/jpeg,image/gif" required/>
+            <input type="file" name="file" accept="image/jpg,image/png,image/jpeg,image/gif"/>
           </div>
         </div>
 
@@ -329,12 +329,12 @@ img:hover {
         <div class="modal-body">
           <div>
             <label><b>Recipe name</b></label>
-            <input class="custom-input" type="text" name="recipe-name" value="Burem ispod saca" required>
+            <input class="custom-input" type="text" name="recipe_name" value="Burem ispod saca" required>
           </div>
 
           <div>
             <label><b>Short recipe description</b></label>
-            <textarea class="custom-input" rows="4" cols="50" name="recipe-description" required></textarea>
+            <textarea class="custom-input" rows="4" cols="50" name="recipe_description" required></textarea>
           </div>
 
           <div>
@@ -344,12 +344,12 @@ img:hover {
 
           <div>
             <label><b>Cooking steps</b></label>
-            <textarea class="custom-input" rows="4" cols="50" name="cooking-steps" required></textarea>
+            <textarea class="custom-input" rows="4" cols="50" name="cooking_steps" required></textarea>
           </div>
 
           <div>
             <label><b>Estimated time for cooking (in minutes)</b></label>
-            <input class="custom-input" type="number" name="cooking-time" value="100" required>
+            <input class="custom-input" type="text" name="time" value="100" required>
           </div>
 
           <div>
@@ -507,27 +507,51 @@ function openRecipeInfo(i) {
     }
 }
 
-$('#add-recipe-form').validate({
+// $('#add-recipe-form').validate({
+//   submitHandler: function(form) {
+//     var recipe = {
+//     name: $('#add-recipe-form input[name="recipe-name"]').val(),
+//     description: $('#add-recipe-form textarea[name="recipe-description"]').val(),
+//     ingredients: $('#add-recipe-form textarea[name="ingredients"]').val(),
+//     cooking_steps: $('#add-recipe-form textarea[name="cooking-steps"]').val(),
+//     cooking_time: $('#add-recipe-form input[name="cooking-time"]').val(),
+//     image: $('#add-recipe-form input[name="file"]').val()
+//     }
+//     var dish_image = recipe.image.split('.').pop().toLowerCase();
+//     if ($.inArray(dish_image, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+//         toastr.error("Uploaded file type is not allowed. Please select an image type.");
+//     } else if (recipe.name != "" && recipe.description != "" && recipe.ingredients != "" && recipe.cooking_time != "" && recipe.cooking_steps != "") {
+//         toastr.success('Recipe added successfully');
+//         $('#add-recipe-modal').modal('toggle');
+//     } else {
+//         toastr.error("All required fields are not filled");
+//     }
+// }
+// });
+
+function open_modal_add_recipe(){
+    $("#add-recipe-modal").modal("toggle");
+  }
+
+  $('#add-recipe-form').validate({
   submitHandler: function(form) {
     var recipe = {
-    name: $('#add-recipe-form input[name="recipe-name"]').val(),
-    description: $('#add-recipe-form textarea[name="recipe-description"]').val(),
+    recipe_name: $('#add-recipe-form input[name="recipe_name"]').val(),
+    recipe_description: $('#add-recipe-form textarea[name="recipe_description"]').val(),
     ingredients: $('#add-recipe-form textarea[name="ingredients"]').val(),
-    cooking_steps: $('#add-recipe-form textarea[name="cooking-steps"]').val(),
-    cooking_time: $('#add-recipe-form input[name="cooking-time"]').val(),
-    image: $('#add-recipe-form input[name="file"]').val()
-    }
-    var dish_image = recipe.image.split('.').pop().toLowerCase();
-    if ($.inArray(dish_image, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
-        toastr.error("Uploaded file type is not allowed. Please select an image type.");
-    } else if (recipe.name != "" && recipe.description != "" && recipe.ingredients != "" && recipe.cooking_time != "" && recipe.cooking_steps != "") {
-        toastr.success('Recipe added successfully');
+    cooking_steps: $('#add-recipe-form textarea[name="cooking_steps"]').val(),
+    time: $('#add-recipe-form input textarea[name="cooking_time"]').val()
+  }
+  $.post( "../rest/recipe_info", recipe ).done(function(data) {
+        toastr.success('You added a new recipe');
         $('#add-recipe-modal').modal('toggle');
-    } else {
-        toastr.error("All required fields are not filled");
+      }).fail(function(error) {
+        toastr.error(error.responseText) 
+      });
     }
-}
-});
+  });
+
+
 
 $('#edit-recipe-form').validate({
   submitHandler: function(form) {

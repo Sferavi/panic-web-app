@@ -7,9 +7,11 @@ require 'auth.php';
 require_once('../vendor/autoload.php');
 require_once('config.php');
 require_once('dao/UsersDao.class.php');
+require_once('dao/RecipeInfoDao.class.php');
 
 
 Flight::register('user_dao', 'UsersDao');
+Flight::register('recipe_info_dao', 'RecipeInfoDao');
 
 Flight::route('GET /users', function(){
     $data = apache_request_headers();
@@ -46,6 +48,12 @@ Flight::route('POST /login', function(){
     Flight::halt(404, 'User not found');
   }
 });
+
+Flight::route('POST /recipe_info', function(){
+  $recipe_info = Flight::request()->data->getData();
+  Flight::recipe_info_dao()->add($recipe_info);
+});
+
 Flight::route('DELETE /users/@id', function($id){
   Flight::user_dao()->delete_user($id);
 });
