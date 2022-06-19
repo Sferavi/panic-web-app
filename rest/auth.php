@@ -1,5 +1,6 @@
 <?php
 use \Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 require 'config.php';
 
 class auth{
@@ -19,7 +20,7 @@ class auth{
     try{
       $jwt = explode("Bearer ", $data['Authorization'])[1];
 
-      $user_data = (array) JWT::decode($jwt, Config::JWT_SECRET, ['HS256']);
+      $user_data = (array) JWT::decode($jwt, new Key(Config::JWT_SECRET, 'HS256'));
 
       $user_data['data'] = (array) $user_data['data'];
 

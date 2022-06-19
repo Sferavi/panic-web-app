@@ -208,7 +208,6 @@ img.avatar {
     <li class="navigation"><a href="my_recipes.html">My Recipes</a></li>
     <li class="navigation"><a href="cookbooks.html">Cookbooks</a></li>
     <li class="navigation"><a href="favorite_recipes.html">Favorite Recipes</a></li>
-    <li class="navigation"><a href="leaderboard.html">Leaderboard</a></li>
     <li class="navigation"><a href="profile.html">Profile</a></li>
     <li class="navigation"><a href="about.html">About</a></li>
     <li class="navigation" style="float:right;"><a href="login.html">Log out</a></li>
@@ -223,7 +222,7 @@ img.avatar {
             </div>
 
         <div class="name-text">
-            <Text>mf69</Text>
+            <Text id="username-1"></Text>
         </div>
     </div>
 
@@ -239,7 +238,7 @@ img.avatar {
                 </div>
 
                 <div>
-                    <text class="user-profile-text">mf69</text>
+                    <text id="username-2" class="user-profile-text"></text>
                 </div>
 
             <div class="user-profile-label-special">
@@ -257,7 +256,7 @@ img.avatar {
                 </div>
 
                 <div>
-                    <text class="user-profile-text">mf@gmail.com</text>
+                    <text id="email-1" class="user-profile-text"></text>
                 </div>
                     <div class="user-profile-label-special">
                         <text class="user-profile-label">Rank:</text>
@@ -301,24 +300,25 @@ img.avatar {
           </div>
 
           <div class="modal-body">
+            <input style="display:none" name="user_id">
             <div>
                 <label><b>Username</b></label>
-                <input class="custom-input inside-modal" type="text" name="username" value="Morgan Freeman" required>
+                <input id="username" class="custom-input inside-modal" type="text" name="username_profile" required>
             </div>
 
             <div>
                 <label><b>Email</b></label>
-                <input class="custom-input inside-modal" type="email" name="email" value="mf@gmail.com" required>
+                <input class="custom-input inside-modal" type="email" name="email_profile" required>
             </div>
 
             <div>
                 <label><b>Password</b></label>
-                <input class="custom-input inside-modal" type="password" name="password" minLength="8" value="121eH*R##R" required>
+                <input class="custom-input inside-modal" type="password" name="password_profile" minLength="8" required>
             </div>
 
             <div>
                 <label><b>Confirm Password</b></label>
-                <input class="custom-input inside-modal" type="password" name="confirm-password" minLength="8" value="121eH*R##R" required>
+                <input class="custom-input inside-modal" type="password" name="confirm_password_profile" minLength="8" required>
             </div>
           </div>
 
@@ -338,49 +338,123 @@ img.avatar {
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
 <script>
+
+
+get_user();
+
+function get_user() {
+  $.ajax({
+    url: "../rest/user",
+    type: "GET",
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader('Authorization', 'Bearer ' +  localStorage.getItem("user_token"));
+    },
+    success: function( data ) {
+        $('#username-1').text(data.username);
+        $('#username-2').text(data.username);
+        $('#email-1').text(data.email);
+    },
+    error: function(){
+      toastr.error(error.responseText) 
+    }
+  });
+}
+
+
+//EDITING USER
+function open_modal_edit_user(i) {
+  $.get( "../rest/user" + i, null ).done(function(data) {
+    $("#edit-profile-modal").modal('toggle');
+    $('#edit-profile-form input[name="user_id"]').val(data.id);
+    $('#edit-profile-form input[name="username_profile"]').val(data.username);
+    $('#edit-profile-form input[name="email_profile"]').val(data.email);
+    $('#edit-profile-form input[name="password_profile"]').val(data.password);
+    $('#edit-profile-form input[name="confirm_password_profile"]').val(data.password);
+  }).fail(function(error) {
+    toastr.error(error.responseText) 
+  });
+}
+
 $('#edit-profile-form').validate({
   submitHandler: function(form) {
-      var confirmPassword =$('#edit-profile-form input[name="confirm-password"]').val();
-      var lowerCaseLetters = /[a-z]/g;
-      var upperCaseLetters = /[A-Z]/g;
-      var numbers = /[0-9]/g;
-      var user = {
-        username: $('#edit-profile-form input[name="username"]').val(),
-        email: $('#edit-profile-form input[name="email"]').val(),
-        password: $('#edit-profile-form input[name="password"]').val()
-      }
-    if (isValid(user.username)) {
-        if (user.password == confirmPassword) {
-            if(!isValid(user.password)) {
-                if(user.password.match(lowerCaseLetters)) {
-                    if(user.password.match(upperCaseLetters)) {
-                        if(user.password.match(numbers)) {
-                            toastr.success('User profile edited successfully');
-                            $('#edit-profile-modal').modal('toggle');
-                        } else {
-                            toastr.error("Passwords has to contain at least one number");
-                        }
-                    } else {
-                        toastr.error("Passwords has to contain at least one upper case letter");
-                    }
-                } else {
-                    toastr.error("Passwords has to contain at least one lower case letter");
-                }
-            } else {
-            toastr.error("Passwords has to contain at least one special character");
-            }
-        } else {
-            toastr.error("Passwords do not match");
-        }
-    } else {
-        toastr.error("Username cannot contain special characters");
+    var user_profile = {
+    id: $('#edit-profile-form input[name="user_id"]').val(),
+    username_profile: $('#edit-profile-form input[name="username_profile"]').val(),
+    email_profile: $('#edit-profile-form input[name="email_profile"]').val(),
+    password_profile: $('#edit-profile-form input[name="password_profile"]').val(),
+    confirm_password_profile: $('#edit-profile-form input[name="confirm_password_profile"]').val()
     }
+          if (user_profile.username_profile != "" && user_profile.email_profile != "" && user_profile.password_profile != "" && user_profile.confirm_password_profile != "") {
+            $.post( "../rest/user" + user_profile.id, user_profile ).done(function(data) {
+            toastr.success('User information edited successfully');
+            $('#edit-profile-modal').modal('toggle');
+            get_user();
+            }).fail(function(error) {
+              toastr.error(error.responseText) 
+            });
+      } else {
+        toastr.error("All required fields are not filled");
+      }
 }
 });
 
-function isValid(str){
- return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(str);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// $('#edit-profile-form').validate({
+//   submitHandler: function(form) {
+//       var confirmPassword =$('#edit-profile-form input[name="confirm-password"]').val();
+//       var lowerCaseLetters = /[a-z]/g;
+//       var upperCaseLetters = /[A-Z]/g;
+//       var numbers = /[0-9]/g;
+//       var user = {
+//         username: $('#edit-profile-form input[name="username"]').val(),
+//         email: $('#edit-profile-form input[name="email"]').val(),
+//         password: $('#edit-profile-form input[name="password"]').val()
+//       }
+//     if (isValid(user.username)) {
+//         if (user.password == confirmPassword) {
+//             if(!isValid(user.password)) {
+//                 if(user.password.match(lowerCaseLetters)) {
+//                     if(user.password.match(upperCaseLetters)) {
+//                         if(user.password.match(numbers)) {
+//                             toastr.success('User profile edited successfully');
+//                             $('#edit-profile-modal').modal('toggle');
+//                         } else {
+//                             toastr.error("Passwords has to contain at least one number");
+//                         }
+//                     } else {
+//                         toastr.error("Passwords has to contain at least one upper case letter");
+//                     }
+//                 } else {
+//                     toastr.error("Passwords has to contain at least one lower case letter");
+//                 }
+//             } else {
+//             toastr.error("Passwords has to contain at least one special character");
+//             }
+//         } else {
+//             toastr.error("Passwords do not match");
+//         }
+//     } else {
+//         toastr.error("Username cannot contain special characters");
+//     }
+// }
+// });
+
+// function isValid(str){
+//  return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(str);
+// }
 </script>
 
 </html>

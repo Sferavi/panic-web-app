@@ -205,7 +205,6 @@ body {
     <li class="navigation"><a href="my_recipes.html">My Recipes</a></li>
     <li class="navigation"><a href="cookbooks.html">Cookbooks</a></li>
     <li class="navigation"><a href="favorite_recipes.html">Favorite Recipes</a></li>
-    <li class="navigation"><a href="leaderboard.html">Leaderboard</a></li>
     <li class="navigation"><a href="profile.html">Profile</a></li>
     <li class="navigation"><a href="about.html">About</a></li>
     <li class="navigation" style="float:right;"><a href="login.html">Log out</a></li>
@@ -213,14 +212,18 @@ body {
 <h1 class="text-center">Cookbooks</h1>
 
 <div class="search-cookbooks">
-    <i type="button" class="fa fa-plus fa-2x add-button" data-toggle="modal" data-target="#add-cookbook-modal"></i>
+    <i type="button" class="fa fa-plus fa-2x add-button" data-toggle="modal" onclick="open_modal_add_cookbook()"></i>
     <input type="text" name="cook-search" id="cookbooks-search" placeholder="&#128269; Search cookbooks" class="form-control"/>
 </div>
 
 <div class="container">
     <ul id="list-of-cookbooks" class="cookbook-list" style="padding-left: 55px;">
       <div class="row">
-          <li class="list-item" id="cookbook-1">
+        
+      <div id="lista"></div>
+
+
+          <!-- <li class="list-item" id="cookbook-1">
             <div class="img-container">
                 <img src="../images/eat_king.jpg" alt="Avatar" class="img-displayed">
             </div>
@@ -270,7 +273,7 @@ body {
                   </ul>  
                 </div>
                 <div class="button-container"><i class="fa fa-trash-o delete-button" onclick="confirm_modal_show(3)"></i></div>
-            </li>
+            </li> -->
         </div>  
     </ul>  
 </div>
@@ -294,6 +297,7 @@ body {
           <div class="select-container">
             <label><b>Recipes</b></label>
               <select id="recipes-1" name="recipes" multiple class="form-control" required>
+                <div id="cookbook_recipe_options_add"></div>
                 <option value="1">Skillet Chicken Bulgogi</option>
                 <option value="2">Omelet in a Mug</option>
                 <option value="3">Grandma's Salmon Cakes</option>
@@ -302,9 +306,15 @@ body {
               </select>
           </div>
 
-          <div>
+          <!-- <div>
             <label><b>Dish picture (.png, .gif, .jpeg, .jpg allowed)</b></label>
             <input type="file" name="file" accept="image/jpg,image/png,image/jpeg,image/gif" required/>
+          </div> -->
+          <div>
+            <label><b>Choose the cookbook picture</b></label>
+            <select id="cookbook_picture_add" name="cookbook_pictures_add">
+              <div id="cookbook_picture_options_add"></div>
+            </select>
           </div>
         </div>
           <div class="modal-footer">
@@ -328,25 +338,34 @@ body {
         </div>
 
         <div class="modal-body">
+          <input style="display:none" name="cookbook_id">
           <div>
             <label><b>Cookbook name</b></label>
             <input class="custom-input" type="text" name="cookbook-name" value="Cookbook 1" required>
           </div>
-            <div class="select-container">
+            <!-- <div class="select-container">
               <label><b>Recipes (If none are selected, the previously selected recipes will remain</b></label>
               <select id="recipes-2" name="recipes" multiple class="form-control">
+                <div id="cookbook_recipe_options_edit"></div>
                 <option value="1">Skillet Chicken Bulgogi</option>
                 <option value="2">Omelet in a Mug</option>
                 <option value="3">Grandma's Salmon Cakes</option>
                 <option value="4">Klupskies (Polish Burgers)</option>
                 <option value="5">Andie's Sloppy Joes</option>
               </select>
-            </div>
-            <div>
+            </div> -->
+            
+          <div>
+            <label><b>Choose the cookbook picture</b></label>
+            <select id="cookbook_picture_edit" name="cookbook_pictures_edit">
+              <div id="cookbook_picture_options_edit"></div>
+            </select>
+          </div>
+            <!-- <div>
               <label><b>Dish picture (.png, .gif, .jpeg, .jpg allowed)</b></label>
               <label><b>Hint: If no file is chosen, the previously uploaded picture will be displayed</b></label>
               <input type="file" name="file" accept="image/jpg,image/png,image/jpeg,image/gif"/>
-            </div>
+            </div> -->
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -357,12 +376,13 @@ body {
   </div>
 </div>
 
-<div class="modal fade" id="confirm-modal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+<div class="modal fade" id="delete-cookbook-modal" tabindex="-1" role="dialog" aria-labelledby="deleteCookbookModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <form id="confirm-form">
+      <form id="delete-cookbook-form">
         <div class="modal-header" style="text-align: center;">
-          <h4 class="modal-title" id="confirm-modal-label" style="display:inline-block;">Are you sure?</h4>
+          <h4 class="modal-title" id="delete-cookbook-modal-label" style="display:inline-block;">Are you sure?</h4>
+          <input style="display:none" name="cookbook_id">
         </div>
         <div class="modal-footer" style="border: none;">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
@@ -382,6 +402,78 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
 
 <script>
+
+$('#edit-cookbook-modal').on('shown.bs.modal', function () {
+  var selected_image = localStorage.getItem('selected_image');
+  $('#edit-cookbook-form select[name="cookbook_pictures_edit"]').val(selected_image);
+});
+
+
+function get_all_recipes() {
+$.get( "../rest/recipes", null ).done(function(data) {
+  data.forEach(element => {
+    data.forEach(element => {
+        document.getElementById('cookbook_picture_add').innerHTML+='<option value="' + element.url + '">' + element.name + '</option>';
+    });
+  });
+  }).fail(function(error) {
+    toastr.error(error.responseText) 
+  });
+}
+
+// function get_cookbook_recipes_for_dropdown(type) {
+//   if (type == 0) {
+//     $.get( "../rest/recipes", null ).done(function(data) {
+//       document.getElementById('recipes-1').innerHTML = '';
+//         data.forEach(element => {
+//           console.log(element.id)
+//             document.getElementById('recipes-1').innerHTML+='<option value="' + element.id + '">' + element.recipe_name + '</option>';
+//         });
+//       }).fail(function(error) {
+//         toastr.error(error.responseText) 
+//       });
+//   } else if (type == 1) {
+//     $.get( "../rest/recipes", null ).done(function(data) {
+//       document.getElementById('recipes-2').innerHTML = '';
+//         data.forEach(element => {
+//             document.getElementById('recipes-2').innerHTML+='<option value="' + element.id + '">' + element.recipe_name + '</option>';
+//         });
+//       }).fail(function(error) {
+//         toastr.error(error.responseText) 
+//       });
+//   }
+// }
+
+
+get_cookbooks();
+
+function get_cookbooks() {
+  $.ajax({
+    url: "../rest/cookbooks",
+    type: "GET",
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader('Authorization', 'Bearer ' +  localStorage.getItem("user_token"));
+    },
+    success: function( data ) {
+      document.getElementById('lista').innerHTML = "";
+      data.forEach(element => {
+        if (element.recipe_1_name != null && element.recipe_2_name != null && element.recipe_3_name != null) {
+          document.getElementById('lista').innerHTML+='<li class="list-item" id="cookbook-' + element.id + '"><div class="img-container"><img src="' + element.image_url + '" alt="Avatar" class="img-displayed"></div><div class="text-container"><div class="title-text">' + element.name + '<i class="fa fa-pencil edit-button" onclick="open_modal_edit_cookbook(' + element.id + ')"></i></div><div class="body-text"><ul><div onclick="openRecipeInfo(' + element.recipe_1_id + ')" class="recipe-links">- ' + element.recipe_1_name + '</div><div onclick="openRecipeInfo(' + element.recipe_2_id + ')" class="recipe-links">- ' + element.recipe_2_name + '</div><div onclick="openRecipeInfo(' + element.recipe_3_id + ')" class="recipe-links">- ' + element.recipe_3_name + '</div></ul></div></div><div class="button-container"><i class="fa fa-trash-o delete-button" onclick="open_modal_delete_cookbook(' + element.id +')"></i></div></li>';
+        } else if (element.recipe_1_name != null && element.recipe_2_name != null && element.recipe_3_name == null) {
+          document.getElementById('lista').innerHTML+='<li class="list-item" id="cookbook-' + element.id + '"><div class="img-container"><img src="' + element.image_url + '" alt="Avatar" class="img-displayed"></div><div class="text-container"><div class="title-text">' + element.name + '<i class="fa fa-pencil edit-button" onclick="open_modal_edit_cookbook(' + element.id + ')"></i></div><div class="body-text"><ul><div onclick="openRecipeInfo(' + element.recipe_1_id + ')" class="recipe-links">- ' + element.recipe_1_name + '</div><div onclick="openRecipeInfo(' + element.recipe_2_id + ')" class="recipe-links">- ' + element.recipe_2_name + '</div></ul></div></div><div class="button-container"><i class="fa fa-trash-o delete-button" onclick="open_modal_delete_cookbook(' + element.id +')"></i></div></li>';
+        } else if (element.recipe_1_name != null && element.recipe_2_name == null && element.recipe_3_name == null) {
+          document.getElementById('lista').innerHTML+='<li class="list-item" id="cookbook-' + element.id + '"><div class="img-container"><img src="' + element.image_url + '" alt="Avatar" class="img-displayed"></div><div class="text-container"><div class="title-text">' + element.name + '<i class="fa fa-pencil edit-button" onclick="open_modal_edit_cookbook(' + element.id + ')"></i></div><div class="body-text"><ul><div onclick="openRecipeInfo(' + element.recipe_1_id + ')" class="recipe-links">- ' + element.recipe_1_name + '</div></ul></div></div><div class="button-container"><i class="fa fa-trash-o delete-button" onclick="open_modal_delete_cookbook(' + element.id +')"></i></div></li>';
+        }
+  });
+    },
+    error: function(){
+      toastr.error(error.responseText) 
+    }
+  });
+}
+
+
+
 
 function confirm_modal_show(i) {
   $("#confirm-modal").modal('show');
@@ -410,107 +502,259 @@ $('#confirm-form').validate({
 });
 
 function openRecipeInfo(i) {
-    if (i == 1) {
-        localStorage.setItem('recipe_image_url', '../images/recipe_1.jpg');
-        localStorage.setItem('recipe_name', 'Skillet Chicken Bulgogi');
-        localStorage.setItem('recipe_ingredients', '1/4 cup chopped onion \n5 tablespoons soy sauce \n2.5 tablespoons brown sugar \n2 tablespoons minced garlic \n2 tablespoons sesame oil \n1 tablespoon sesame seeds \n1/2 teaspoon cayenne \nsalt and ground black pepper to taste \n1 pound skinless boneless chicken breasts cut into thin strips \n');
-        localStorage.setItem('recipe_cooking_process', 'Step 1: \nWhisk onion, soy sauce, brown sugar, garlic, sesame oil, sesame seeds, cayenne pepper, salt, and black pepper together in a bowl until marinade is smooth.\nStep 2: \nCook and stir chicken and marinade together in a large skillet over medium-high heat until chicken is cooked through, about 15 minutes.');
-        localStorage.setItem('cooking_timer', 15);
-        window.location = 'recipe_info.html';
-    } else if (i == 2) {
-        localStorage.setItem('recipe_image_url', '../images/recipe_2.jpg');
-        localStorage.setItem('recipe_name', "Andie's Sloppy Joes");
-        localStorage.setItem('recipe_ingredients', '1 cup lentils \n2 onions diced \n1 pound lean ground beef \n1 large green bell pepper diced \n3/4 cup ketchup \n3/4 cup barbeque sauce \n1 tablespoon Worcestershire sauce \n1 tablespoon minced garlic');
-        localStorage.setItem('recipe_cooking_process', 'Step 1: \nPlace lentils in a small pot and cover with 2 cups hot water. Bring to a boil; reduce heat and simmer until lentils are tender, about 15 minutes. Drain.\nStep 2: \nHeat a large nonstick skillet over medium heat. Add onions; cook and stir until softened, 3 to 5 minutes. Add ground beef and green bell pepper; cook and stir until browned, about 8 minutes. \nStep 3: \nStir drained lentils, ketchup, barbeque sauce, Worcestershire sauce, and minced garlic into the skillet. Reduce heat to low and simmer until flavors combine and mixture thickens to desired consistency, 15 to 20 minutes.');
-        localStorage.setItem('cooking_timer', 46);
-        window.location = 'recipe_info.html';
-    } else if (i == 3) {
-        localStorage.setItem('recipe_image_url', '../images/recipe_3.jpg');
-        localStorage.setItem('recipe_name', 'Omelet in a Mug');
-        localStorage.setItem('recipe_ingredients', '1 large egg \n2 egg whites \n2 tablespoons shredded Cheddar cheese \n2 tablespoons diced fully cooked ham \n1 tablespoon diced green bell pepper \nsalt and ground black pepper to taste \ncooking spray');
-        localStorage.setItem('recipe_cooking_process', 'Step 1: \nCombine egg, egg whites, Cheddar cheese, ham, bell pepper, salt, and ground pepper in a microwave-safe mug coated with non-stick spray.\nStep 2: \nMicrowave on high for 1 minute; stir. Return to microwave and cook until eggs are completely set, 1 to 1 1/2 minutes longer.');
-        localStorage.setItem('cooking_timer', 2);
-        window.location = 'recipe_info.html';
-    } else if (i == 4) {
-        localStorage.setItem('recipe_image_url', '../images/recipe_4.jpg');
-        localStorage.setItem('recipe_name', "Grandma's Salmon Cakes");
-        localStorage.setItem('recipe_ingredients', '1 (14.75 ounce) can salmon drained and flaked \n2 eggs, beaten \n1 small onion, diced \n1 teaspoon ground black pepper \n3 tablespoons vegetable oil');
-        localStorage.setItem('recipe_cooking_process', 'Step 1: \nPick through the salmon and remove any bones. In a mixing bowl, beat the eggs and add the diced onion, salmon and pepper. Mix thoroughly.\nStep 2: \nShape into 2 ounce patties; about 7 or 8 patties. In a large skillet over medium heat, heat the oil. Fry each patty for 5 minutes on each side or until crispy and golden brown.');
-        localStorage.setItem('cooking_timer', 20);
-        window.location = 'recipe_info.html';
-    } else if (i == 5) {
-        localStorage.setItem('recipe_image_url', '../images/recipe_5.jpg');
-        localStorage.setItem('recipe_name', 'Klupskies (Polish Burgers)');
-        localStorage.setItem('recipe_ingredients', '1 pound ground beef \n1 small onion, diced \n1/2 green pepper, diced \n1 large green bell pepper diced \n1 egg \n2 tablespoons ketchup \n1/4 teaspoon sea salt \n2 slices white bread, torn into small pieces \n1 serving cooking spray with olive oil');
-        localStorage.setItem('recipe_cooking_process', 'Step 1: \nMix ground beef, onion, green pepper, egg, ketchup, and sea salt together in a bowl; mix in the white bread pieces until evenly distributed. Form the mixture into 4 patties.\nStep 2: \nSpray a large skillet with olive oil cooking spray and set over medium heat. Cook the burgers until well-browned on the bottoms, about 10 minutes; flip the burgers and cook until the meat is no longer pink and the juices run clear, 8 to 10 more minutes.');
-        localStorage.setItem('cooking_timer', 20);
-        window.location = 'recipe_info.html';
-    }
+
+  $.get( "../rest/recipe/" + i, null ).done(function(data) {
+
+    localStorage.setItem('recipe_image_url', data.image_url);
+    localStorage.setItem('recipe_name', data.recipe_name);
+    localStorage.setItem('recipe_ingredients', data.ingredients);
+    localStorage.setItem('recipe_cooking_process', data.cooking_steps);
+    localStorage.setItem('cooking_timer', data.time);
+    window.location = 'recipe_info.html';
+  }).fail(function(error) {
+    toastr.error(error.responseText) 
+  });
+
+    // if (i == 1) {
+    //     localStorage.setItem('recipe_image_url', '../images/recipe_1.jpg');
+    //     localStorage.setItem('recipe_name', 'Skillet Chicken Bulgogi');
+    //     localStorage.setItem('recipe_ingredients', '1/4 cup chopped onion \n5 tablespoons soy sauce \n2.5 tablespoons brown sugar \n2 tablespoons minced garlic \n2 tablespoons sesame oil \n1 tablespoon sesame seeds \n1/2 teaspoon cayenne \nsalt and ground black pepper to taste \n1 pound skinless boneless chicken breasts cut into thin strips \n');
+    //     localStorage.setItem('recipe_cooking_process', 'Step 1: \nWhisk onion, soy sauce, brown sugar, garlic, sesame oil, sesame seeds, cayenne pepper, salt, and black pepper together in a bowl until marinade is smooth.\nStep 2: \nCook and stir chicken and marinade together in a large skillet over medium-high heat until chicken is cooked through, about 15 minutes.');
+    //     localStorage.setItem('cooking_timer', 15);
+    //     window.location = 'recipe_info.html';
+    // } else if (i == 2) {
+    //     localStorage.setItem('recipe_image_url', '../images/recipe_2.jpg');
+    //     localStorage.setItem('recipe_name', "Andie's Sloppy Joes");
+    //     localStorage.setItem('recipe_ingredients', '1 cup lentils \n2 onions diced \n1 pound lean ground beef \n1 large green bell pepper diced \n3/4 cup ketchup \n3/4 cup barbeque sauce \n1 tablespoon Worcestershire sauce \n1 tablespoon minced garlic');
+    //     localStorage.setItem('recipe_cooking_process', 'Step 1: \nPlace lentils in a small pot and cover with 2 cups hot water. Bring to a boil; reduce heat and simmer until lentils are tender, about 15 minutes. Drain.\nStep 2: \nHeat a large nonstick skillet over medium heat. Add onions; cook and stir until softened, 3 to 5 minutes. Add ground beef and green bell pepper; cook and stir until browned, about 8 minutes. \nStep 3: \nStir drained lentils, ketchup, barbeque sauce, Worcestershire sauce, and minced garlic into the skillet. Reduce heat to low and simmer until flavors combine and mixture thickens to desired consistency, 15 to 20 minutes.');
+    //     localStorage.setItem('cooking_timer', 46);
+    //     window.location = 'recipe_info.html';
+    // } else if (i == 3) {
+    //     localStorage.setItem('recipe_image_url', '../images/recipe_3.jpg');
+    //     localStorage.setItem('recipe_name', 'Omelet in a Mug');
+    //     localStorage.setItem('recipe_ingredients', '1 large egg \n2 egg whites \n2 tablespoons shredded Cheddar cheese \n2 tablespoons diced fully cooked ham \n1 tablespoon diced green bell pepper \nsalt and ground black pepper to taste \ncooking spray');
+    //     localStorage.setItem('recipe_cooking_process', 'Step 1: \nCombine egg, egg whites, Cheddar cheese, ham, bell pepper, salt, and ground pepper in a microwave-safe mug coated with non-stick spray.\nStep 2: \nMicrowave on high for 1 minute; stir. Return to microwave and cook until eggs are completely set, 1 to 1 1/2 minutes longer.');
+    //     localStorage.setItem('cooking_timer', 2);
+    //     window.location = 'recipe_info.html';
+    // } else if (i == 4) {
+    //     localStorage.setItem('recipe_image_url', '../images/recipe_4.jpg');
+    //     localStorage.setItem('recipe_name', "Grandma's Salmon Cakes");
+    //     localStorage.setItem('recipe_ingredients', '1 (14.75 ounce) can salmon drained and flaked \n2 eggs, beaten \n1 small onion, diced \n1 teaspoon ground black pepper \n3 tablespoons vegetable oil');
+    //     localStorage.setItem('recipe_cooking_process', 'Step 1: \nPick through the salmon and remove any bones. In a mixing bowl, beat the eggs and add the diced onion, salmon and pepper. Mix thoroughly.\nStep 2: \nShape into 2 ounce patties; about 7 or 8 patties. In a large skillet over medium heat, heat the oil. Fry each patty for 5 minutes on each side or until crispy and golden brown.');
+    //     localStorage.setItem('cooking_timer', 20);
+    //     window.location = 'recipe_info.html';
+    // } else if (i == 5) {
+    //     localStorage.setItem('recipe_image_url', '../images/recipe_5.jpg');
+    //     localStorage.setItem('recipe_name', 'Klupskies (Polish Burgers)');
+    //     localStorage.setItem('recipe_ingredients', '1 pound ground beef \n1 small onion, diced \n1/2 green pepper, diced \n1 large green bell pepper diced \n1 egg \n2 tablespoons ketchup \n1/4 teaspoon sea salt \n2 slices white bread, torn into small pieces \n1 serving cooking spray with olive oil');
+    //     localStorage.setItem('recipe_cooking_process', 'Step 1: \nMix ground beef, onion, green pepper, egg, ketchup, and sea salt together in a bowl; mix in the white bread pieces until evenly distributed. Form the mixture into 4 patties.\nStep 2: \nSpray a large skillet with olive oil cooking spray and set over medium heat. Cook the burgers until well-browned on the bottoms, about 10 minutes; flip the burgers and cook until the meat is no longer pink and the juices run clear, 8 to 10 more minutes.');
+    //     localStorage.setItem('cooking_timer', 20);
+    //     window.location = 'recipe_info.html';
+    // }
 }
 
-function edit_cookbook(i) {
-    if (i == 1) {
-        $("#edit-cookbook-modal").modal('toggle');
-        $('#edit-cookbook-form input[name="cookbook-name"]').val("Eat like a king");
-        $('#edit-recipe-form input[name="file"]').val("");
-    } else if (i == 2) {
-        $("#edit-cookbook-modal").modal('toggle');
-        $('#edit-cookbook-form input[name="cookbook-name"]').val("Perfect Breakfast");
-        $('#edit-recipe-form input[name="file"]').val("");
-    } else if (i == 3) {
-        $("#edit-cookbook-modal").modal('toggle');
-        $('#edit-cookbook-form input[name="cookbook-name"]').val("Easy meals");
-        $('#edit-recipe-form input[name="file"]').val("");
-    }
+// function edit_cookbook(i) {
+//     if (i == 1) {
+//         $("#edit-cookbook-modal").modal('toggle');
+//         $('#edit-cookbook-form input[name="cookbook-name"]').val("Eat like a king");
+//         $('#edit-recipe-form input[name="file"]').val("");
+//     } else if (i == 2) {
+//         $("#edit-cookbook-modal").modal('toggle');
+//         $('#edit-cookbook-form input[name="cookbook-name"]').val("Perfect Breakfast");
+//         $('#edit-recipe-form input[name="file"]').val("");
+//     } else if (i == 3) {
+//         $("#edit-cookbook-modal").modal('toggle');
+//         $('#edit-cookbook-form input[name="cookbook-name"]').val("Easy meals");
+//         $('#edit-recipe-form input[name="file"]').val("");
+//     }
+// }
+
+function get_cookbook_images_for_dropdown(type) {
+  if (type == 0) {
+  $.get( "../rest/cookbook_images", null ).done(function(data) {
+    document.getElementById('cookbook_picture_add').innerHTML = "";
+    data.forEach(element => {
+        document.getElementById('cookbook_picture_add').innerHTML+='<option value="' + element.url + '">' + element.name + '</option>';
+    });
+    }).fail(function(error) {
+      toastr.error(error.responseText) 
+    });
+  } else if (type == 1) {
+  $.get( "../rest/cookbook_images", null ).done(function(data) {
+    document.getElementById('cookbook_picture_edit').innerHTML = "";
+    data.forEach(element => {
+        document.getElementById('cookbook_picture_edit').innerHTML+='<option value="' + element.url + '">' + element.name + '</option>';
+    });
+    }).fail(function(error) {
+      toastr.error(error.responseText) 
+    });
+  }
 }
+
+function get_all_recipes() {
+  $.get( "../rest/recipes", null ).done(function(data) {
+    recipes = data;
+  }).fail(function(error) {
+    toastr.error(error.responseText) 
+  });
+}
+var recipes;
+function open_modal_add_cookbook(){
+    get_cookbook_images_for_dropdown(0);
+    get_all_recipes();
+    // get_cookbook_recipes_for_dropdown(0);
+    $("#add-cookbook-modal").modal("toggle");
+  }
 
 $('#add-cookbook-form').validate({
   submitHandler: function(form) {
-    var cookbook = {
-    name: $('#add-cookbook-form input[name="cookbook-name"]').val(),
-    recipes: $('#add-cookbook-form select[name="recipes"]').val(),
-    image: $('#add-cookbook-form input[name="file"]').val()
-    }
-    var dish_image = cookbook.image.split('.').pop().toLowerCase();
-    if ($.inArray(dish_image, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
-        toastr.error("Uploaded file type is not allowed. Please select an image type.");
-    } else if (cookbook.name != "" && cookbook.recipes.length != 0) {
-        toastr.success('Cookbook added successfully');
-        $('#add-cookbook-modal').modal('toggle');
+    
+    var selected_recipe_list = $('#add-cookbook-form select[id="recipes-1"]').val();
+
+    if ($('#add-cookbook-form select[id="recipes-1"] :selected').length > 2) {
+      var cookbook = {
+        name: $('#add-cookbook-form input[name="cookbook-name"]').val(),
+        image_url: $('#add-cookbook-form select[name="cookbook_pictures_add"]').val(),
+        recipe_1_id: null,
+        recipe_2_id: null,
+        recipe_3_id: null,
+        recipe_1_name: null,
+        recipe_2_name: null,
+        recipe_3_name: null,
+        user_id: '',
+        }
+    } else if ($('#add-cookbook-form select[id="recipes-1"] :selected').length = 2) {
+      var cookbook = {
+        name: $('#add-cookbook-form input[name="cookbook-name"]').val(),
+        image_url: $('#add-cookbook-form select[name="cookbook_pictures_add"]').val(),
+        recipe_1_id: null,
+        recipe_2_id: null,
+        recipe_1_name: null,
+        recipe_2_name: null,
+        user_id: '',
+        }
+    } else if ($('#add-cookbook-form select[id="recipes-1"] :selected').length = 1) {
+      var cookbook = {
+        name: $('#add-cookbook-form input[name="cookbook-name"]').val(),
+        image_url: $('#add-cookbook-form select[name="cookbook_pictures_add"]').val(),
+        recipe_1_id: null,
+        recipe_1_name: null,
+        user_id: '',
+        }
     } else {
-        toastr.error("Recipes for the cookbook are not selected");
+      toastr.error("All required fields are not filled");
+      return;
     }
+
+    increment = 1;
+    selected_recipe_list.forEach(element => {
+
+      if (increment > 3) {
+        increment = 1;
+      }
+      cookbook['recipe_'+increment+'_id'] = element;
+      cookbook['recipe_'+increment+'_name'] = recipes[element].recipe_name;
+      increment++;
+      console.log(cookbook);
+    });
+
+
+    $.ajax({
+      url: "../rest/cookbook_info",
+      type: "POST",
+      data: cookbook,
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader('Authorization', 'Bearer ' +  localStorage.getItem("user_token"));
+      },
+      success: function( data ) {
+        toastr.success('You added a new cookbook');
+        $('#add-cookbook-modal').modal('toggle');
+        get_cookbooks();
+      },
+      error: function(){
+        toastr.error(error.responseText) 
+      }
+    });
+
+
+
+    // var cookbook = {
+    // name: $('#add-cookbook-form input[name="cookbook-name"]').val(),
+    // recipes: $('#add-cookbook-form select[name="recipes"]').val(),
+    // image: $('#add-cookbook-form input[name="file"]').val()
+    // }
+    // var dish_image = cookbook.image.split('.').pop().toLowerCase();
+    // if ($.inArray(dish_image, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+    //     toastr.error("Uploaded file type is not allowed. Please select an image type.");
+    // } else if (cookbook.name != "" && cookbook.recipes.length != 0) {
+    //     toastr.success('Cookbook added successfully');
+    // } else {
+    //     toastr.error("Recipes for the cookbook are not selected");
+    // }
 }
 });
 
+function open_modal_edit_cookbook(i) {
+  $.get( "../rest/cookbook/" + i, null ).done(function(data) {
+    $("#edit-cookbook-modal").modal('toggle');
+    $('#edit-cookbook-form input[name="cookbook_id"]').val(data.id);
+    $('#edit-cookbook-form input[name="cookbook-name"]').val(data.name);
+    localStorage.setItem('selected_image', data.image_url);
+    get_cookbook_images_for_dropdown(1);
+  }).fail(function(error) {
+    toastr.error(error.responseText) 
+  });
+}
+
 $('#edit-cookbook-form').validate({
   submitHandler: function(form) {
+    // var cookbook = {
+    // id: $('#edit-cookbook-form input[name="cookbook_id"]').val(),
+    // name: $('#edit-cookbook-form input[name="cookbook-name"]').val(),
+    // recipes: $('#edit-cookbook-form select[name="recipes"]').val(),
+    // image: $('#edit-cookbook-form input[name="file"]').val()
+    // }
     var cookbook = {
-    name: $('#edit-cookbook-form input[name="cookbook-name"]').val(),
-    recipes: $('#edit-cookbook-form select[name="recipes"]').val(),
-    image: $('#edit-cookbook-form input[name="file"]').val()
+      id: $('#edit-cookbook-form input[name="cookbook_id"]').val(),
+      name: $('#edit-cookbook-form input[name="cookbook-name"]').val(),
+      image_url: $('#edit-cookbook-form select[name="cookbook_pictures_edit"]').val(),
     }
-    if (cookbook.image != '') {
-      var dish_image = cookbook.image.split('.').pop().toLowerCase();
-      if ($.inArray(dish_image, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
-          toastr.error("Uploaded file type is not allowed. Please select an image type.");
-      } else if (cookbook.name != "") {
-        toastr.success('Cookbook edited successfully');
-        $('#edit-cookbook-modal').modal('toggle');
-      } else {
-        toastr.error("Cookbook name cannot be empty");
-      }
-    } else {
-      if (cookbook.name != "") {
-        toastr.success('Cookbook edited successfully');
-        $('#edit-cookbook-modal').modal('toggle');
-      } else {
-        toastr.error("Cookbook name cannot be empty");
-      }
-    }
+    $.post( "../rest/cookbook/" + cookbook.id, cookbook ).done(function(data) {
+            toastr.success('Cookbook edited successfully');
+            $('#edit-cookbook-modal').modal('toggle');
+            get_cookbooks();
+            }).fail(function(error) {
+              toastr.error(error.responseText) 
+            });
     
 }
 });
+
+function open_modal_delete_cookbook(id) {
+  $("#delete-cookbook-modal").modal('show');
+  $('#delete-cookbook-form input[name="cookbook_id"]').val(id);
+}
+
+
+$('#delete-cookbook-form').validate({
+  submitHandler: function(form) {
+    var cookbook_id =  $('#delete-cookbook-form input[name="cookbook_id"]').val();
+  
+    $.ajax({
+          url: '../rest/cookbook/'+cookbook_id,
+          method: 'DELETE',
+          success: function(result) {
+              toastr.success('Deleted');
+              get_cookbooks();
+          },
+          error: function(){
+            toastr.success('Not deleted');
+          }
+      });
+  $("#delete-cookbook-modal").modal('hide');
+  }
+});
+
 
 $(document).ready(function() {
     $('#recipes-1').multiselect({
