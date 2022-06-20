@@ -228,7 +228,7 @@ img.avatar {
 
     <div class="user-information-container col-sm-12">
         <div class="button-container">
-            <button type="button" class="btn btn-primary edit-button" data-toggle="modal" data-target="#edit-profile-modal">Edit Profile</button>
+            <button type="button" class="btn btn-primary edit-button" data-toggle="modal" onclick="open_modal_edit_user()">Edit Profile</button>
         </div>
 
         <div class="text-center col-sm-12">
@@ -362,17 +362,32 @@ function get_user() {
 
 
 //EDITING USER
-function open_modal_edit_user(i) {
-  $.get( "../rest/user" + i, null ).done(function(data) {
-    $("#edit-profile-modal").modal('toggle');
-    $('#edit-profile-form input[name="user_id"]').val(data.id);
-    $('#edit-profile-form input[name="username_profile"]').val(data.username);
-    $('#edit-profile-form input[name="email_profile"]').val(data.email);
-    $('#edit-profile-form input[name="password_profile"]').val(data.password);
-    $('#edit-profile-form input[name="confirm_password_profile"]').val(data.password);
-  }).fail(function(error) {
-    toastr.error(error.responseText) 
+function open_modal_edit_user() {
+    $.ajax({
+    url: "../rest/user",
+    type: "GET",
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader('Authorization', 'Bearer ' +  localStorage.getItem("user_token"));
+    },
+    success: function( data ) {
+        $("#edit-profile-modal").modal('toggle');
+        $('#edit-profile-form input[name="user_id"]').val(data.id);
+        $('#edit-profile-form input[name="username_profile"]').val(data.username);
+        $('#edit-profile-form input[name="email_profile"]').val(data.email);
+        $('#edit-profile-form input[name="password_profile"]').val(data.password);
+        $('#edit-profile-form input[name="confirm_password_profile"]').val(data.password);
+    },
+    error: function(){
+      toastr.error(error.responseText) 
+    }
   });
+
+
+
+//   $.get( "../rest/user" + i, null ).done(function(data) {
+//   }).fail(function(error) {
+//     toastr.error(error.responseText) 
+//   });
 }
 
 $('#edit-profile-form').validate({

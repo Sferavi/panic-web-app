@@ -7,8 +7,8 @@ class RecipeInfoDao extends BaseDao{
     parent::__construct('recipe_info');
   }
   public function get_all_favorite_recipes($user_id){
-    $query = "SELECT * FROM recipe_info WHERE favorite!=0 AND user_id = :user_id";
-    return @($this->execute_query($query, ['user_id' => $user_id]));
+    $query = "SELECT * FROM recipe_info WHERE favorite!=0";
+    return @($this->execute_query($query, []));
   }
   public function get_recipe_by_id($id){
     $query = "SELECT * FROM recipe_info WHERE id=:id";
