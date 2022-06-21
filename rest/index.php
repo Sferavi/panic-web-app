@@ -40,6 +40,7 @@ Flight::route('POST /users', function(){
     Flight::user_dao()->add($users);
 });
 
+
 Flight::route('POST /login', function(){
   $user = Flight::request()->data->getData();
   $db_user = Flight::user_dao()->get_user_by_username($user['username']);

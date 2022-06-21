@@ -90,6 +90,7 @@ img.avatar {
 .user-information-container {
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
 }
 .user-profile-label {
     white-space: nowrap;
@@ -118,11 +119,12 @@ img.avatar {
 }
 .button-container {
     margin-bottom: 20px;
+    padding-right: 7px;
 }
 .user-profile-label-special {
     margin: 50px 10px 0 10px;
 }
-.outer_circle {
+/* .outer_circle {
     position: relative;
     margin: 50px auto;
     padding: 25px 0;
@@ -130,9 +132,9 @@ img.avatar {
     height: 100px;
     border-radius: 50%;
     background: #ffffff;
-}
+} */
     
-.inner_circle-1 {
+/* .inner_circle-1 {
     background-image: linear-gradient(
                 to bottom, rgb(63, 6, 6) 0%,
                 rgb(212, 47, 41) 100%);
@@ -143,8 +145,8 @@ img.avatar {
     left: -20px;
     z-index: -1;
     border-radius: inherit;
-}
-.inner_circle-2 {
+} */
+/* .inner_circle-2 {
     background-image: linear-gradient(
                 to bottom, rgb(10, 61, 14) 0%,
                 rgb(60, 240, 60) 100%);
@@ -155,8 +157,8 @@ img.avatar {
     left: -20px;
     z-index: -1;
     border-radius: inherit;
-}
-.inner_circle-3 {
+} */
+/* .inner_circle-3 {
     background-image: linear-gradient(
                 to bottom, rgb(23, 34, 126) 0%,
                 rgb(61, 88, 242) 100%);
@@ -167,7 +169,7 @@ img.avatar {
     left: -20px;
     z-index: -1;
     border-radius: inherit;
-}
+} */
 @media screen and (min-width: 601px) {
     .img-text-container {
         border-right: 3px solid #5d2025;
@@ -213,7 +215,7 @@ img.avatar {
     <li class="navigation" style="float:right;"><a href="login.html">Log out</a></li>
 </ul>
 
-<h1 class="text-center">My Profile</h1>
+<h1 class="text-center" style="padding-bottom: 190px;">My Profile</h1>
 <div id="user-profile-form" class="form-custom col-lg-10 col-sm-12" style="float: none; padding: 0;">
     <div class="custom-container">
         <div class="img-text-container">
@@ -227,9 +229,9 @@ img.avatar {
     </div>
 
     <div class="user-information-container col-sm-12">
-        <div class="button-container">
+        <!-- <div class="button-container">
             <button type="button" class="btn btn-primary edit-button" data-toggle="modal" onclick="open_modal_edit_user()">Edit Profile</button>
-        </div>
+        </div> -->
 
         <div class="text-center col-sm-12">
             <div class="user-information-left col-md-4 col-sm-12">
@@ -240,14 +242,14 @@ img.avatar {
                 <div>
                     <text id="username-2" class="user-profile-text"></text>
                 </div>
-
+<!-- 
             <div class="user-profile-label-special">
                 <text class="user-profile-label">Number of Recipes:</text>
                 <div class="outer_circle">
                         <text style="font-size: 38px;">33</text>
                     <div class="inner_circle-1"></div>
                 </div>
-            </div>
+            </div> -->
             </div>
 
             <div class="user-information-left col-md-4 col-sm-12">
@@ -258,13 +260,13 @@ img.avatar {
                 <div>
                     <text id="email-1" class="user-profile-text"></text>
                 </div>
-                    <div class="user-profile-label-special">
+                    <!-- <div class="user-profile-label-special">
                         <text class="user-profile-label">Rank:</text>
                         <div class="outer_circle">
                             <text style="font-size: 38px;">10th</text>
                         <div class="inner_circle-1"></div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="user-information-right col-md-4 col-sm-12">
@@ -276,15 +278,18 @@ img.avatar {
                         <text class="user-profile-text">************</text>
                     </div>
                     
-                    <div class="user-profile-label-special">
+                    <!-- <div class="user-profile-label-special">
                         <text class="user-profile-label" style="overflow: auto;">Number of Cookbooks:</text>
                         <div class="outer_circle">
                             <text style="font-size: 38px;">3</text>
                         <div class="inner_circle-1"></div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
+        </div>
+        <div class="button-container">
+            <button type="button" class="btn btn-primary edit-button" data-toggle="modal" onclick="open_modal_edit_user()">Edit Profile</button>
         </div>
     </div>
 </div>
