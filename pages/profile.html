@@ -124,52 +124,6 @@ img.avatar {
 .user-profile-label-special {
     margin: 50px 10px 0 10px;
 }
-/* .outer_circle {
-    position: relative;
-    margin: 50px auto;
-    padding: 25px 0;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #ffffff;
-} */
-    
-/* .inner_circle-1 {
-    background-image: linear-gradient(
-                to bottom, rgb(63, 6, 6) 0%,
-                rgb(212, 47, 41) 100%);
-    position: absolute;
-    top: -20px;
-    bottom: -20px;
-    right: -20px;
-    left: -20px;
-    z-index: -1;
-    border-radius: inherit;
-} */
-/* .inner_circle-2 {
-    background-image: linear-gradient(
-                to bottom, rgb(10, 61, 14) 0%,
-                rgb(60, 240, 60) 100%);
-    position: absolute;
-    top: -20px;
-    bottom: -20px;
-    right: -20px;
-    left: -20px;
-    z-index: -1;
-    border-radius: inherit;
-} */
-/* .inner_circle-3 {
-    background-image: linear-gradient(
-                to bottom, rgb(23, 34, 126) 0%,
-                rgb(61, 88, 242) 100%);
-    position: absolute;
-    top: -20px;
-    bottom: -20px;
-    right: -20px;
-    left: -20px;
-    z-index: -1;
-    border-radius: inherit;
-} */
 @media screen and (min-width: 601px) {
     .img-text-container {
         border-right: 3px solid #5d2025;
@@ -229,63 +183,33 @@ img.avatar {
     </div>
 
     <div class="user-information-container col-sm-12">
-        <!-- <div class="button-container">
-            <button type="button" class="btn btn-primary edit-button" data-toggle="modal" onclick="open_modal_edit_user()">Edit Profile</button>
-        </div> -->
-
         <div class="text-center col-sm-12">
             <div class="user-information-left col-md-4 col-sm-12">
                 <div>
                     <text class="user-profile-label">Username:</text>
                 </div>
-
                 <div>
                     <text id="username-2" class="user-profile-text"></text>
                 </div>
-<!-- 
-            <div class="user-profile-label-special">
-                <text class="user-profile-label">Number of Recipes:</text>
-                <div class="outer_circle">
-                        <text style="font-size: 38px;">33</text>
-                    <div class="inner_circle-1"></div>
-                </div>
-            </div> -->
             </div>
 
             <div class="user-information-left col-md-4 col-sm-12">
                 <div>
                     <text class="user-profile-label">Email:</text>
                 </div>
-
                 <div>
                     <text id="email-1" class="user-profile-text"></text>
                 </div>
-                    <!-- <div class="user-profile-label-special">
-                        <text class="user-profile-label">Rank:</text>
-                        <div class="outer_circle">
-                            <text style="font-size: 38px;">10th</text>
-                        <div class="inner_circle-1"></div>
-                        </div>
-                    </div> -->
-                </div>
+            </div>
 
-                <div class="user-information-right col-md-4 col-sm-12">
-                    <div>
-                        <text class="user-profile-label">Password:</text>
-                    </div>
-
-                    <div>
-                        <text class="user-profile-text">************</text>
-                    </div>
-                    
-                    <!-- <div class="user-profile-label-special">
-                        <text class="user-profile-label" style="overflow: auto;">Number of Cookbooks:</text>
-                        <div class="outer_circle">
-                            <text style="font-size: 38px;">3</text>
-                        <div class="inner_circle-1"></div>
-                        </div>
-                    </div> -->
+            <div class="user-information-right col-md-4 col-sm-12">
+                <div>
+                    <text class="user-profile-label">Password:</text>
                 </div>
+                <div>
+                    <text class="user-profile-text">************</text>
+                </div>
+            </div>
             </div>
         </div>
         <div class="button-container">
@@ -365,7 +289,6 @@ function get_user() {
   });
 }
 
-
 //EDITING USER
 function open_modal_edit_user() {
     $.ajax({
@@ -386,13 +309,6 @@ function open_modal_edit_user() {
       toastr.error(error.responseText) 
     }
   });
-
-
-
-//   $.get( "../rest/user" + i, null ).done(function(data) {
-//   }).fail(function(error) {
-//     toastr.error(error.responseText) 
-//   });
 }
 
 $('#edit-profile-form').validate({
@@ -417,64 +333,5 @@ $('#edit-profile-form').validate({
       }
 }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// $('#edit-profile-form').validate({
-//   submitHandler: function(form) {
-//       var confirmPassword =$('#edit-profile-form input[name="confirm-password"]').val();
-//       var lowerCaseLetters = /[a-z]/g;
-//       var upperCaseLetters = /[A-Z]/g;
-//       var numbers = /[0-9]/g;
-//       var user = {
-//         username: $('#edit-profile-form input[name="username"]').val(),
-//         email: $('#edit-profile-form input[name="email"]').val(),
-//         password: $('#edit-profile-form input[name="password"]').val()
-//       }
-//     if (isValid(user.username)) {
-//         if (user.password == confirmPassword) {
-//             if(!isValid(user.password)) {
-//                 if(user.password.match(lowerCaseLetters)) {
-//                     if(user.password.match(upperCaseLetters)) {
-//                         if(user.password.match(numbers)) {
-//                             toastr.success('User profile edited successfully');
-//                             $('#edit-profile-modal').modal('toggle');
-//                         } else {
-//                             toastr.error("Passwords has to contain at least one number");
-//                         }
-//                     } else {
-//                         toastr.error("Passwords has to contain at least one upper case letter");
-//                     }
-//                 } else {
-//                     toastr.error("Passwords has to contain at least one lower case letter");
-//                 }
-//             } else {
-//             toastr.error("Passwords has to contain at least one special character");
-//             }
-//         } else {
-//             toastr.error("Passwords do not match");
-//         }
-//     } else {
-//         toastr.error("Username cannot contain special characters");
-//     }
-// }
-// });
-
-// function isValid(str){
-//  return !/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(str);
-// }
 </script>
-
 </html>

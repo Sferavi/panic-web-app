@@ -143,7 +143,7 @@ $('#login-form').validate({
 
     $.post( "../rest/login", user ).done(function(data) {
       window.localStorage.setItem("user_token", data.user_token);
-      window.location = "recipes.html"; // redirect from login form to main app
+      window.location = "recipes.html";
     }).fail(function(error) {
       toastr.error(error.responseText)
     });
