@@ -1,7 +1,7 @@
 <?php
 class Mail
 {
-    public static function send_register_welcome_email($book_name, $number_of_books_left, $manager_email)
+    public static function send_register_welcome_email()
     {
         // Create the Transport
         $transport = (new Swift_SmtpTransport('smtp.mailgun.org', 587))
