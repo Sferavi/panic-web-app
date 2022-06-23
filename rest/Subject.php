@@ -1,10 +1,11 @@
 <?php
+
 class Subject implements \SplSubject
 {
     public $state;
 
     public $additionalInfo;
-    
+
     private $observers;
 
     public function __construct()
@@ -31,7 +32,7 @@ class Subject implements \SplSubject
 
     public function someBusinessLogic($code, $text)
     {
-        $this->state = $code;
+        $this->state          = $code;
         $this->additionalInfo = $text;
         $this->notify();
     }

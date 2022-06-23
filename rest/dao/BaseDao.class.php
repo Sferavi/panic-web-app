@@ -1,72 +1,81 @@
 <?php
-class BaseDao {
-  private $pdo;
 
-  private $table_name;
+class BaseDao
+{
+    private $pdo;
 
-  public function __construct($table_name){
-    $this->pdo = new PDO(Config::CONNECTION_STRING, Config::USERNAME, Config::PASSWORD);
-    $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    private $table_name;
 
-    $this->table_name = $table_name;
-  }
+    public function __construct($table_name)
+    {
+        $this->pdo = new PDO(Config::CONNECTION_STRING, Config::USERNAME, Config::PASSWORD);
+        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-  protected function execute_query($sql_query, $params){
-    $stmt = $this->pdo->prepare($sql_query);
-    $stmt->execute($params);
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    return $stmt->fetchAll();
-  }
-
-  protected function execute_query1($sql_query, $params){
-      $stmt = $this->pdo->prepare($sql_query);
-      $stmt->execute($params);
+        $this->table_name = $table_name;
     }
 
-  protected function execute_insert($entity){
-    // entity is assiciative array storage of object - key/value storage
-    $columns = "";
-    $params = "";
-    foreach ($entity as $key => $value) {
-      $columns .= $key.",";
-      $params .=":".$key.",";
+    protected function execute_query($sql_query, $params)
+    {
+        $stmt = $this->pdo->prepare($sql_query);
+        $stmt->execute($params);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll();
     }
-    $columns = rtrim($columns, ",");
-    $params = rtrim($params, ",");
 
-    $stmt = $this->pdo->prepare("INSERT INTO {$this->table_name} ({$columns}) VALUES ({$params})");
-    $stmt->execute($entity);
-    $entity['id'] = $this->pdo->lastInsertId(); // get back id from DB
-    return $entity;
-  }
-  public function add($entity){
-    return $this->execute_insert($entity);
-  }
-  public function get_by_id($id){
-    return $this->execute_query("SELECT * FROM {$this->table_name} WHERE id = :id", ["id" => $id]);
-  }
-  public function get_all(){
-    return $this->execute_query("SELECT * FROM {$this->table_name} ", []);
-  }
+    protected function execute_query1($sql_query, $params)
+    {
+        $stmt = $this->pdo->prepare($sql_query);
+        $stmt->execute($params);
+    }
 
-  public function execute($entity, $query){
-    try {
-      $stmt = $this->pdo->prepare($query);
-      if ($entity){
-        foreach($entity as $key => $value){
-          $stmt->bindValue($key, $value);
+    protected function execute_insert($entity)
+    {
+        // entity is assiciative array storage of object - key/value storage
+        $columns = "";
+        $params  = "";
+        foreach ($entity as $key => $value) {
+            $columns .= $key.",";
+            $params .= ":".$key.",";
         }
-      }
-      $stmt->execute();
-      return $stmt;
-    } catch (PDOException $e) {
-      throw $e;
+        $columns = rtrim($columns, ",");
+        $params  = rtrim($params, ",");
+
+        $stmt = $this->pdo->prepare("INSERT INTO {$this->table_name} ({$columns}) VALUES ({$params})");
+        $stmt->execute($entity);
+        $entity['id'] = $this->pdo->lastInsertId(); // get back id from DB
+        return $entity;
     }
-  }
+    public function add($entity)
+    {
+        return $this->execute_insert($entity);
+    }
+    public function get_by_id($id)
+    {
+        return $this->execute_query("SELECT * FROM {$this->table_name} WHERE id = :id", ["id" => $id]);
+    }
+    public function get_all()
+    {
+        return $this->execute_query("SELECT * FROM {$this->table_name} ", []);
+    }
 
-  public function update($entity, $query){
-    $this->execute($entity, $query);
-  }
+    public function execute($entity, $query)
+    {
+        try {
+            $stmt = $this->pdo->prepare($query);
+            if ($entity) {
+                foreach ($entity as $key => $value) {
+                    $stmt->bindValue($key, $value);
+                }
+            }
+            $stmt->execute();
+            return $stmt;
+        } catch (PDOException $e) {
+            throw $e;
+        }
+    }
+
+    public function update($entity, $query)
+    {
+        $this->execute($entity, $query);
+    }
 }
-
-?>
