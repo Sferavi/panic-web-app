@@ -1,19 +1,8 @@
 # panic-web-app
 
-This is v1.0.0 of Panic Web Application
+This is v2.0.0 of Panic Web Application
 
-Deployment: https://panic-web-app.netlify.app/pages/login.html
+Deployment: https://panic-web-application.herokuapp.com
 
-Most of this version is intial design with few functional parts.
+Panic is a web application designed and developed for people that want to learn new cooking recipes or share their own recipes with other users. Application can be used to browse through a variety of individual dishes or cookbooks as a whole, add new recipes, keep track of time for each recipe with a simple timer amongst other functionalities
 
-In the current version you are only able to login with hardcoded credentials:
-
-                    -username: "user123"
-                    -password: "ibuEDU123."
-
-In the final version user will be able to register themselves and login with their own credentials.
-
-Also folders and format of the project will not keep the same shape, and they will be organized in a more fitting manner.
-
-
-Student: Faris Šahović

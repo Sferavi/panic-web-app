@@ -41,7 +41,7 @@ Flight::route('GET /user', function () {
 
 Flight::route('POST /users', function () {
     $subject = new Subject();
-    $nrn = new NewRegistrationNotifier();
+    $nrn     = new NewRegistrationNotifier();
     $subject->attach($nrn);
     $user = Flight::request()->data->getData();
     Flight::user_dao()->add($user);

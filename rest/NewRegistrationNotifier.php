@@ -8,7 +8,7 @@ class NewRegistrationNotifier implements \SplObserver
 {
     public function update(\SplSubject $subject)
     {
-        if($subject->state < 1) {
+        if ($subject->state < 1) {
             //State less than 1 until registration is successful
         } else {
             //faris.sahovic@stu.ibu.edu.ba has been set as a test manager email
