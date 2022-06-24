@@ -5,6 +5,9 @@ header('Access-Control-Allow-Methods: PUT, GET, POST, DELETE, OPTIONS, PATCH');
 
 
 require 'auth.php';
+require 'Mail.php';
+require 'NewRegistrationNotifier.php';
+require 'Subject.php';
 require_once('../vendor/autoload.php');
 require_once('config.php');
 require_once('dao/UsersDao.class.php');
@@ -37,10 +40,14 @@ Flight::route('GET /user', function () {
 });
 
 Flight::route('POST /users', function () {
-    $users = Flight::request()->data->getData();
-    Flight::user_dao()->add($users);
+    $subject = new Subject();
+    $nrn = new NewRegistrationNotifier();
+    $subject->attach($nrn);
+    $user = Flight::request()->data->getData();
+    Flight::user_dao()->add($user);
+    $subject->someBusinessLogic(1, $user['username']);
+    $subject->detach($nrn);
 });
-
 
 Flight::route('POST /login', function () {
     $user    = Flight::request()->data->getData();
